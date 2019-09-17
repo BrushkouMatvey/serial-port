@@ -96,7 +96,7 @@
             this.groupBox1.Size = new System.Drawing.Size(348, 248);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "COM port control";
+            this.groupBox1.Text = "Control and debug";
             // 
             // tableLayoutPanel1
             // 
@@ -125,6 +125,7 @@
             this.tBoxDebug.Location = new System.Drawing.Point(158, 3);
             this.tBoxDebug.Multiline = true;
             this.tBoxDebug.Name = "tBoxDebug";
+            this.tBoxDebug.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tBoxDebug.Size = new System.Drawing.Size(149, 92);
             this.tBoxDebug.TabIndex = 17;
             // 
@@ -251,7 +252,6 @@
             this.inputTextBox.Name = "inputTextBox";
             this.inputTextBox.Size = new System.Drawing.Size(307, 54);
             this.inputTextBox.TabIndex = 7;
-            this.inputTextBox.TextChanged += new System.EventHandler(this.InputTextBox_TextChanged);
             this.inputTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InputTextBox_KeyDown);
             // 
             // openButton
@@ -289,7 +289,7 @@
             // 
             // Form1
             // 
-            this.ClientSize = new System.Drawing.Size(454, 602);
+            this.ClientSize = new System.Drawing.Size(382, 602);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.input);
