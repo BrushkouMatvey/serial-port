@@ -289,7 +289,7 @@
             // 
             // Form1
             // 
-            this.ClientSize = new System.Drawing.Size(382, 602);
+            this.ClientSize = new System.Drawing.Size(372, 602);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.input);

@@ -19,18 +19,27 @@ namespace serialPort
             InitializeComponent();
         }
 
+
+        //загрузка названий сэмулированных последовательных портов в массив строк
         private void Form1_Load(object sender, EventArgs e)
         {
+            outputTextBox.ReadOnly = true;
             string[] ports = SerialPort.GetPortNames();
             cBoxSelectedComPort.Items.AddRange(ports);
             cBoxSelectedComPort.Text = ports[0].ToString();
         }
+
+
+        //событие нажатия на кнопку OpenPort
         private void OpenButton_Click(object sender, EventArgs e)
         {
-
             serialPortConnect();
             errorProvider.SetError(cBoxSelectedComPort, null);
         }
+
+
+        //open serial port
+        //Событие DataReceived возникает во вторичном потоке при получении данных от объекта SerialPort.
         private void serialPortConnect()
         {
             if (serialPort != null)
@@ -50,6 +59,8 @@ namespace serialPort
             serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
 
         }
+
+        
         private void setDefaultSerialPortValues()
         {
             cBoxStopBits.Text = "One";
@@ -57,17 +68,22 @@ namespace serialPort
             cBoxDataBits.Text = "8";
             cBoxSpeed.Text = "9600";
         }
+
         private bool portIsOpen()
         {
             if (serialPort != null)
                 return true;
             else return false;
         }
+
+        //отправка одного символа в порт
         public void sendData(string data)
         {
             serialPort.Write(data);
             tBoxDebug.AppendText("Sending data...\n");
         }
+
+        //последняя нажатая клавиша. Считывается код и передается в другой порт через функцию SedndData
         private void InputTextBox_KeyDown(object sender, KeyEventArgs e) { 
             if (!portIsOpen())
             {
@@ -80,6 +96,8 @@ namespace serialPort
                 serialPort.Write(data, 0, data.Length);
             else sendData(Convert.ToChar(e.KeyCode).ToString().ToLower());
         }
+
+        //обработка отправленных данных в порт
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = (SerialPort)sender;
@@ -100,6 +118,8 @@ namespace serialPort
             }
             tBoxDebug.AppendText("Receiving data...\n");
         }
+
+        //проверка введенного значения со значениями из списка 
         private void validData(ComboBox comboBox, CancelEventArgs e)
         {
             bool validValue = false;
@@ -120,6 +140,7 @@ namespace serialPort
             }
         }
 
+        //события обработки comboBoxes
         private void CBoxDataBits_Validating(object sender, CancelEventArgs e)
         {
             validData(cBoxDataBits, e);
@@ -137,6 +158,7 @@ namespace serialPort
             validData(cBoxSpeed, e);
         }
 
+        //События изменения comboBoxes. Если в списке выбран другой элемент, проверяем данные.
         private void CBoxSpeed_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (!portIsOpen())
@@ -219,6 +241,7 @@ namespace serialPort
             showInfoDebug();
         }
 
+        //проверка зависимости StopBits от DataBits
         private void checkCombinations(string cBoxStopBitsValue, int cBoxDataBitsValue)
         {
             if (cBoxStopBitsValue == "OnePointFive" &&
@@ -240,6 +263,8 @@ namespace serialPort
                 return;
             }
         }
+
+        //отображение информации о порте
         private void showInfoDebug()
         {
             tBoxDebugPortInfo.Text = "Name:" + serialPort.PortName + "\n";
@@ -248,6 +273,8 @@ namespace serialPort
             tBoxDebugPortInfo.AppendText("StopBits:" + serialPort.StopBits + "\n");
             tBoxDebugPortInfo.AppendText("Parity:" + serialPort.Parity + "\n");
         }
+
+        //проверка текста в модуле input (изменен до открытия порта). MessageBox с предупреждением
         private void OutputTextBox_TextChanged(object sender, EventArgs e)
         {
             if (!portIsOpen())
@@ -272,6 +299,6 @@ namespace serialPort
             outputTextBox.Text = "";
             tBoxDebugPortInfo.Text = "";
             tBoxDebug.Text = "";
-        }
+        }-
     }
 }

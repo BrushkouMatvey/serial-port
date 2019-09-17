@@ -15,12 +15,19 @@ namespace serialPort
         [STAThread]
         static void Main(string[] args)
         {
+            
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //if(args.Length<2)
-            //Process.Start(args[0], "afdadf");
 
+            if (args.Length == 0)
+            {
+                Process process = new Process();
+                process.StartInfo.FileName = "D:\\University (materials)\\5sem\\ТОКС\\serialPort\\serialPort\\bin\\Debug\\serialPort.exe";
+                process.StartInfo.Arguments = "app2";
+                process.Start();
+            }
             Application.Run(new Form1());
+
 
         }
     }
