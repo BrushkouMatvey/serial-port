@@ -56,6 +56,7 @@ namespace serialPort
             {
                 tBoxDebug.Text = "Serial port " + cBoxSelectedComPort.SelectedItem.ToString() + " can't open.\n";
             }
+            serialPort.ErrorReceived += new SerialErrorReceivedEventHandler(ErrorHandler);
             serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
 
         }
@@ -93,7 +94,7 @@ namespace serialPort
             }
             byte[] data = { Convert.ToByte(e.KeyCode) };
             if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Enter)
-                serialPort.Write(data, 0, data.Length);
+                serialPort.Write(data, 0, 2);
             else sendData(Convert.ToChar(e.KeyCode).ToString().ToLower());
         }
 
@@ -119,6 +120,34 @@ namespace serialPort
             tBoxDebug.AppendText("Receiving data...\n");
         }
 
+        //Определяет ошибки, возникающие в объекте SerialPort.
+        private void ErrorHandler(object sender, SerialErrorReceivedEventArgs e)
+        {
+            switch (e.EventType)
+            {
+                
+                case SerialError.Frame:
+                    //Аппаратное обеспечение обнаружило ошибку кадрирования.
+                    MessageBox.Show("The hardware detected a framing error.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+                case SerialError.Overrun:
+                    //Произошло переполнение буфера символов.
+                    MessageBox.Show("A character-buffer overrun has occurred. The next character is lost.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+                case SerialError.RXOver:
+                    //Произошло переполнение входного буфера.
+                    MessageBox.Show("An input buffer overflow has occurred.There is either no room in the input buffer, or a character was received after the end of file(EOF) character.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+                case SerialError.RXParity:
+                    //ошибка четности.
+                    MessageBox.Show("The hardware detected a parity error.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+                case SerialError.TXFull:
+                    //Приложение попыталось передать символ, но буфер вывода был заполнен.
+                    MessageBox.Show("The application tried to transmit a character, but the output buffer was full.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+            }
+        }
         //проверка введенного значения со значениями из списка 
         private void validData(ComboBox comboBox, CancelEventArgs e)
         {
@@ -205,9 +234,6 @@ namespace serialPort
             int cBoxDataBitsValue = Convert.ToInt32(cBoxDataBits.SelectedItem.ToString());
             switch (cBoxStopBitsValue)
             {
-                case "None":
-                    serialPort.StopBits = StopBits.None;
-                    break;
                 case "One":
                     serialPort.StopBits = StopBits.One;
                     break;
@@ -231,13 +257,11 @@ namespace serialPort
                 errorProvider.SetError(cBoxSelectedComPort, "Open Serial port, please");
                 return;
             }
-    
+            
             string cBoxStopBitsValue = cBoxStopBits.SelectedItem.ToString();
             int cBoxDataBitsValue = Convert.ToInt32(cBoxDataBits.SelectedItem.ToString());
+
             checkCombinations(cBoxStopBitsValue, cBoxDataBitsValue);
-
-            serialPort.DataBits = cBoxDataBitsValue;
-
             showInfoDebug();
         }
 
@@ -254,13 +278,16 @@ namespace serialPort
                 showInfoDebug();
                 return;
             }
-
-            if (cBoxStopBitsValue == "Two" && cBoxDataBitsValue.ToString() == Convert.ToString(5))
+            else if (cBoxStopBitsValue == "Two" && cBoxDataBitsValue.ToString() == Convert.ToString(5))
             {
                 MessageBox.Show("Invalid combination of DataBits and StopBits values", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 cBoxDataBits.SelectedIndex = cBoxDataBits.FindStringExact(Convert.ToString(8));
                 showInfoDebug();
                 return;
+            }
+            else
+            {
+                serialPort.DataBits = int.Parse(cBoxDataBits.SelectedItem.ToString());
             }
         }
 
@@ -299,6 +326,6 @@ namespace serialPort
             outputTextBox.Text = "";
             tBoxDebugPortInfo.Text = "";
             tBoxDebug.Text = "";
-        }-
+        }        
     }
 }

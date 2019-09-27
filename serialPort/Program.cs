@@ -18,6 +18,7 @@ namespace serialPort
             
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            
 
             if (args.Length == 0)
             {

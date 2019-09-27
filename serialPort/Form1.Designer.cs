@@ -142,7 +142,6 @@
             // 
             this.cBoxStopBits.FormattingEnabled = true;
             this.cBoxStopBits.Items.AddRange(new object[] {
-            "None",
             "One",
             "OnePointFive",
             "Two"});
@@ -295,6 +294,7 @@
             this.Controls.Add(this.input);
             this.Controls.Add(this.groupBox1);
             this.Name = "Form1";
+            this.Text = "Serial Port App";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.groupBox3.ResumeLayout(false);
