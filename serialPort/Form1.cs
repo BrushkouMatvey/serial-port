@@ -26,21 +26,28 @@ namespace serialPort
             outputTextBox.ReadOnly = true;
             string[] ports = SerialPort.GetPortNames();
             cBoxSelectedComPort.Items.AddRange(ports);
-            cBoxSelectedComPort.Text = ports[0].ToString();
+            if (ports.Length != 0)
+                cBoxSelectedComPort.Text = ports[0].ToString();
+            disconnectButton.Enabled = false;
         }
 
 
         //событие нажатия на кнопку OpenPort
-        private void OpenButton_Click(object sender, EventArgs e)
+        private void ConnectButton_Click(object sender, EventArgs e)
         {
-            serialPortConnect();
-            errorProvider.SetError(cBoxSelectedComPort, null);
+            if(serialPortConnect())
+            {
+                errorProvider.SetError(cBoxSelectedComPort, null);
+                connectButton.Enabled = false;
+                disconnectButton.Enabled = true;
+                cBoxSelectedComPort.Enabled = false;
+            }
+            
         }
-
 
         //open serial port
         //Событие DataReceived возникает во вторичном потоке при получении данных от объекта SerialPort.
-        private void serialPortConnect()
+        private bool serialPortConnect()
         {
             if (serialPort != null)
                 serialPort.Close();
@@ -49,15 +56,18 @@ namespace serialPort
             try
             {
                 serialPort.Open();
-                tBoxDebug.Text = "Serial port " + cBoxSelectedComPort.SelectedItem.ToString() + " is open.\n";
+                tBoxDebug.Text = "Connect to " + cBoxSelectedComPort.SelectedItem.ToString() + " serial port.\n";
                 showInfoDebug();
+                
             }
             catch
             {
-                tBoxDebug.Text = "Serial port " + cBoxSelectedComPort.SelectedItem.ToString() + " can't open.\n";
+                tBoxDebug.Text = "Can't connect to " + cBoxSelectedComPort.SelectedItem.ToString() + " serial port.\n";
+                return false;
             }
             serialPort.ErrorReceived += new SerialErrorReceivedEventHandler(ErrorHandler);
             serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+            return true;
 
         }
 
@@ -85,17 +95,27 @@ namespace serialPort
         }
 
         //последняя нажатая клавиша. Считывается код и передается в другой порт через функцию SedndData
-        private void InputTextBox_KeyDown(object sender, KeyEventArgs e) { 
+        private void InputTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
             if (!portIsOpen())
             {
                 MessageBox.Show("Serial port is not open", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 inputTextBox.Text = "";
                 return;
             }
+
+            e.KeyData.ToString();
+            
             byte[] data = { Convert.ToByte(e.KeyCode) };
             if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Enter)
-                serialPort.Write(data, 0, 2);
-            else sendData(Convert.ToChar(e.KeyCode).ToString().ToLower());
+            {
+                serialPort.Write(data, 0, 1);
+                e.Handled = false;
+            }
+            else
+            {
+                e.Handled = true;
+            }            
         }
 
         //обработка отправленных данных в порт
@@ -103,21 +123,23 @@ namespace serialPort
         {
             SerialPort sp = (SerialPort)sender;
 
-            Keys keyCode = (Keys)sp.ReadChar();
+            byte[] data = new byte[sp.BytesToRead];
+            sp.Read(data, 0, data.Length);
+
+            Keys keyCode = (Keys)data[0];
             switch (keyCode)
             {
                 case Keys.Back:
                     if (outputTextBox.Text.Length == 0) break;
                     outputTextBox.Text = outputTextBox.Text.Substring(0, outputTextBox.Text.Length - 1);
-                    break;
-                case Keys.Enter:
-                    outputTextBox.AppendText("\n");
+                    
                     break;
                 default:
-                    outputTextBox.AppendText(Convert.ToChar(keyCode).ToString());
+                    string s = Encoding.GetEncoding("UTF-8").GetString(data);
+                    outputTextBox.AppendText(s);
+                    tBoxDebug.AppendText("Receiving data...\n");
                     break;
-            }
-            tBoxDebug.AppendText("Receiving data...\n");
+            }          
         }
 
         //Определяет ошибки, возникающие в объекте SerialPort.
@@ -310,8 +332,21 @@ namespace serialPort
                 MessageBox.Show("Serial port is not open", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private void CBoxSelectedComPort_SelectedValueChanged(object sender, EventArgs e)
+       
+        private void clearTextBoxes()
         {
+            inputTextBox.Text = "";
+            outputTextBox.Text = "";
+            tBoxDebugPortInfo.Text = "";
+            tBoxDebug.Text = "";
+        }
+
+        private void DisconnectButton_Click(object sender, EventArgs e)
+        {
+            connectButton.Enabled = true;
+            disconnectButton.Enabled = false;
+            cBoxSelectedComPort.Enabled = true;
+
             clearTextBoxes();
             setDefaultSerialPortValues();
             if (serialPort != null)
@@ -320,12 +355,42 @@ namespace serialPort
                 serialPort = null;
             }
         }
-        private void clearTextBoxes()
+
+        private StringBuilder OldText = new StringBuilder();
+        private void InputTextBox_GotFocus(object sender, EventArgs e)
         {
-            inputTextBox.Text = "";
-            outputTextBox.Text = "";
-            tBoxDebugPortInfo.Text = "";
-            tBoxDebug.Text = "";
-        }        
+            OldText = new StringBuilder(inputTextBox.Text);
+            
+        }
+
+        private void InputTextBox_TextChanged(object sender, EventArgs e)
+        {
+            string str = string.Empty;
+            if (!portIsOpen())
+            {
+                inputTextBox.Text = "";
+                MessageBox.Show("Serial port is not open", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            byte[] data;
+            if (OldText.Length <= inputTextBox.Text.Length)
+            {
+                str = inputTextBox.Text.Substring(OldText.Length);
+                data = Encoding.UTF8.GetBytes(str);
+                tBoxDebug.AppendText("Sending data...\n");
+                serialPort.RtsEnable = true;
+                serialPort.Write(data, 0, data.Length);
+                serialPort.RtsEnable = false; 
+            }
+            OldText.Length = inputTextBox.Text.Length;
+        }
+
+        private void InputTextBox_Click(object sender, EventArgs e)
+        {
+            if (inputTextBox.SelectionStart != inputTextBox.Text.Length)
+            {
+                inputTextBox.SelectionStart = inputTextBox.Text.Length;
+            }
+        }
     }
 }
