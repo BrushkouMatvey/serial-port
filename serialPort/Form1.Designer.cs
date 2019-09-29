@@ -49,6 +49,7 @@
             this.cBoxSpeed = new System.Windows.Forms.ComboBox();
             this.input = new System.Windows.Forms.GroupBox();
             this.inputTextBox = new System.Windows.Forms.TextBox();
+            this.applyButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -65,7 +66,7 @@
             this.groupBox3.Controls.Add(this.outputTextBox);
             this.groupBox3.Location = new System.Drawing.Point(17, 95);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(348, 86);
+            this.groupBox3.Size = new System.Drawing.Size(401, 86);
             this.groupBox3.TabIndex = 13;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "output";
@@ -75,12 +76,13 @@
             this.outputTextBox.Location = new System.Drawing.Point(12, 21);
             this.outputTextBox.Multiline = true;
             this.outputTextBox.Name = "outputTextBox";
-            this.outputTextBox.Size = new System.Drawing.Size(307, 54);
+            this.outputTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.outputTextBox.Size = new System.Drawing.Size(383, 54);
             this.outputTextBox.TabIndex = 8;
-            this.outputTextBox.TextChanged += new System.EventHandler(this.OutputTextBox_TextChanged);
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.applyButton);
             this.groupBox1.Controls.Add(this.disconnectButton);
             this.groupBox1.Controls.Add(this.connectButton);
             this.groupBox1.Controls.Add(this.cBoxSelectedComPort);
@@ -95,16 +97,16 @@
             this.groupBox1.Controls.Add(this.cBoxSpeed);
             this.groupBox1.Location = new System.Drawing.Point(17, 187);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(348, 384);
+            this.groupBox1.Size = new System.Drawing.Size(401, 384);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Control and debug";
             // 
             // disconnectButton
             // 
-            this.disconnectButton.Location = new System.Drawing.Point(170, 60);
+            this.disconnectButton.Location = new System.Drawing.Point(209, 60);
             this.disconnectButton.Name = "disconnectButton";
-            this.disconnectButton.Size = new System.Drawing.Size(152, 31);
+            this.disconnectButton.Size = new System.Drawing.Size(186, 31);
             this.disconnectButton.TabIndex = 18;
             this.disconnectButton.Text = "Disconnect";
             this.disconnectButton.UseVisualStyleBackColor = true;
@@ -114,7 +116,7 @@
             // 
             this.connectButton.Location = new System.Drawing.Point(12, 60);
             this.connectButton.Name = "connectButton";
-            this.connectButton.Size = new System.Drawing.Size(152, 31);
+            this.connectButton.Size = new System.Drawing.Size(191, 31);
             this.connectButton.TabIndex = 11;
             this.connectButton.Text = "Connect";
             this.connectButton.UseVisualStyleBackColor = true;
@@ -124,24 +126,25 @@
             // 
             this.cBoxSelectedComPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.cBoxSelectedComPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cBoxSelectedComPort.FormattingEnabled = true;
             this.cBoxSelectedComPort.Location = new System.Drawing.Point(12, 30);
             this.cBoxSelectedComPort.Name = "cBoxSelectedComPort";
-            this.cBoxSelectedComPort.Size = new System.Drawing.Size(310, 24);
+            this.cBoxSelectedComPort.Size = new System.Drawing.Size(383, 24);
             this.cBoxSelectedComPort.TabIndex = 9;
             // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40.20888F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 59.79112F));
             this.tableLayoutPanel1.Controls.Add(this.tBoxDebugPortInfo, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.tBoxDebug, 1, 0);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 224);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 271);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(310, 100);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(383, 100);
             this.tableLayoutPanel1.TabIndex = 17;
             // 
             // tBoxDebugPortInfo
@@ -149,16 +152,16 @@
             this.tBoxDebugPortInfo.Location = new System.Drawing.Point(3, 3);
             this.tBoxDebugPortInfo.Multiline = true;
             this.tBoxDebugPortInfo.Name = "tBoxDebugPortInfo";
-            this.tBoxDebugPortInfo.Size = new System.Drawing.Size(149, 92);
+            this.tBoxDebugPortInfo.Size = new System.Drawing.Size(145, 92);
             this.tBoxDebugPortInfo.TabIndex = 16;
             // 
             // tBoxDebug
             // 
-            this.tBoxDebug.Location = new System.Drawing.Point(158, 3);
+            this.tBoxDebug.Location = new System.Drawing.Point(157, 3);
             this.tBoxDebug.Multiline = true;
             this.tBoxDebug.Name = "tBoxDebug";
             this.tBoxDebug.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tBoxDebug.Size = new System.Drawing.Size(149, 92);
+            this.tBoxDebug.Size = new System.Drawing.Size(223, 92);
             this.tBoxDebug.TabIndex = 17;
             // 
             // labelStopbits
@@ -172,6 +175,7 @@
             // 
             // cBoxStopBits
             // 
+            this.cBoxStopBits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cBoxStopBits.FormattingEnabled = true;
             this.cBoxStopBits.Items.AddRange(new object[] {
             "One",
@@ -179,11 +183,8 @@
             "Two"});
             this.cBoxStopBits.Location = new System.Drawing.Point(120, 195);
             this.cBoxStopBits.Name = "cBoxStopBits";
-            this.cBoxStopBits.Size = new System.Drawing.Size(199, 24);
+            this.cBoxStopBits.Size = new System.Drawing.Size(275, 24);
             this.cBoxStopBits.TabIndex = 5;
-            this.cBoxStopBits.Text = "One";
-            this.cBoxStopBits.SelectedIndexChanged += new System.EventHandler(this.CBoxStopBits_SelectedIndexChanged);
-            this.cBoxStopBits.Validating += new System.ComponentModel.CancelEventHandler(this.CBoxStopBits_Validating);
             // 
             // labelParity
             // 
@@ -196,6 +197,7 @@
             // 
             // cBoxParity
             // 
+            this.cBoxParity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cBoxParity.FormattingEnabled = true;
             this.cBoxParity.Items.AddRange(new object[] {
             "None",
@@ -203,11 +205,8 @@
             "Even"});
             this.cBoxParity.Location = new System.Drawing.Point(120, 136);
             this.cBoxParity.Name = "cBoxParity";
-            this.cBoxParity.Size = new System.Drawing.Size(199, 24);
+            this.cBoxParity.Size = new System.Drawing.Size(275, 24);
             this.cBoxParity.TabIndex = 4;
-            this.cBoxParity.Text = "None";
-            this.cBoxParity.SelectedIndexChanged += new System.EventHandler(this.CBoxParity_SelectedIndexChanged);
-            this.cBoxParity.Validating += new System.ComponentModel.CancelEventHandler(this.CBoxParity_Validating);
             // 
             // labelDatabits
             // 
@@ -220,6 +219,7 @@
             // 
             // cBoxDataBits
             // 
+            this.cBoxDataBits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cBoxDataBits.FormattingEnabled = true;
             this.cBoxDataBits.Items.AddRange(new object[] {
             "5",
@@ -228,11 +228,8 @@
             "8"});
             this.cBoxDataBits.Location = new System.Drawing.Point(120, 166);
             this.cBoxDataBits.Name = "cBoxDataBits";
-            this.cBoxDataBits.Size = new System.Drawing.Size(199, 24);
+            this.cBoxDataBits.Size = new System.Drawing.Size(275, 24);
             this.cBoxDataBits.TabIndex = 3;
-            this.cBoxDataBits.Text = "8";
-            this.cBoxDataBits.SelectedIndexChanged += new System.EventHandler(this.CBoxDataBits_SelectedIndexChanged);
-            this.cBoxDataBits.Validating += new System.ComponentModel.CancelEventHandler(this.CBoxDataBits_Validating);
             // 
             // labelSpeed
             // 
@@ -245,6 +242,7 @@
             // 
             // cBoxSpeed
             // 
+            this.cBoxSpeed.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cBoxSpeed.FormattingEnabled = true;
             this.cBoxSpeed.Items.AddRange(new object[] {
             "75",
@@ -260,18 +258,15 @@
             "115200"});
             this.cBoxSpeed.Location = new System.Drawing.Point(120, 106);
             this.cBoxSpeed.Name = "cBoxSpeed";
-            this.cBoxSpeed.Size = new System.Drawing.Size(199, 24);
+            this.cBoxSpeed.Size = new System.Drawing.Size(275, 24);
             this.cBoxSpeed.TabIndex = 1;
-            this.cBoxSpeed.Text = "9600";
-            this.cBoxSpeed.SelectedIndexChanged += new System.EventHandler(this.CBoxSpeed_SelectedIndexChanged);
-            this.cBoxSpeed.Validating += new System.ComponentModel.CancelEventHandler(this.CBoxSpeed_Validating);
             // 
             // input
             // 
             this.input.Controls.Add(this.inputTextBox);
             this.input.Location = new System.Drawing.Point(17, 8);
             this.input.Name = "input";
-            this.input.Size = new System.Drawing.Size(348, 86);
+            this.input.Size = new System.Drawing.Size(401, 86);
             this.input.TabIndex = 12;
             this.input.TabStop = false;
             this.input.Text = "input";
@@ -281,20 +276,32 @@
             this.inputTextBox.Location = new System.Drawing.Point(12, 21);
             this.inputTextBox.Multiline = true;
             this.inputTextBox.Name = "inputTextBox";
-            this.inputTextBox.Size = new System.Drawing.Size(307, 54);
+            this.inputTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.inputTextBox.Size = new System.Drawing.Size(383, 54);
             this.inputTextBox.TabIndex = 7;
             this.inputTextBox.Click += new System.EventHandler(this.InputTextBox_Click);
             this.inputTextBox.TextChanged += new System.EventHandler(this.InputTextBox_TextChanged);
             this.inputTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InputTextBox_KeyDown);
             // 
+            // applyButton
+            // 
+            this.applyButton.Cursor = System.Windows.Forms.Cursors.Default;
+            this.applyButton.Location = new System.Drawing.Point(204, 225);
+            this.applyButton.Name = "applyButton";
+            this.applyButton.Size = new System.Drawing.Size(191, 34);
+            this.applyButton.TabIndex = 19;
+            this.applyButton.Text = "Apply";
+            this.applyButton.UseVisualStyleBackColor = true;
+            this.applyButton.Click += new System.EventHandler(this.ApplyButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(374, 622);
+            this.ClientSize = new System.Drawing.Size(430, 580);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.input);
             this.Controls.Add(this.groupBox1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "Serial Port App";
@@ -339,6 +346,7 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TextBox tBoxDebug;
         private System.Windows.Forms.Button disconnectButton;
+        private System.Windows.Forms.Button applyButton;
     }
 }
 

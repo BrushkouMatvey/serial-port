@@ -23,30 +23,74 @@ namespace serialPort
         //загрузка названий сэмулированных последовательных портов в массив строк
         private void Form1_Load(object sender, EventArgs e)
         {
-            outputTextBox.ReadOnly = true;
             string[] ports = SerialPort.GetPortNames();
             cBoxSelectedComPort.Items.AddRange(ports);
+
+            cBoxSpeed.Text = "9600";
+            cBoxStopBits.Text = "One";
+            cBoxParity.Text = "None";
+            cBoxDataBits.Text = "8";
+
+
             if (ports.Length != 0)
                 cBoxSelectedComPort.Text = ports[0].ToString();
             disconnectButton.Enabled = false;
+
+            inputTextBox.Enabled = false;
+            outputTextBox.ReadOnly = true;
+            outputTextBox.Enabled = false;
+
+            tBoxDebug.ReadOnly = true;
+            tBoxDebugPortInfo.ReadOnly = true;
+            
         }
-
-
-        //событие нажатия на кнопку OpenPort
+        
+        //обработка события нажати на кнопку Connect
         private void ConnectButton_Click(object sender, EventArgs e)
         {
-            if(serialPortConnect())
+            if (serialPortConnect())
             {
                 errorProvider.SetError(cBoxSelectedComPort, null);
                 connectButton.Enabled = false;
                 disconnectButton.Enabled = true;
                 cBoxSelectedComPort.Enabled = false;
+                inputTextBox.Enabled = true;
+                outputTextBox.Enabled = true;
             }
-            
         }
 
-        //open serial port
-        //Событие DataReceived возникает во вторичном потоке при получении данных от объекта SerialPort.
+        //обработка события нажати на кнопку Disconnect
+        private void DisconnectButton_Click(object sender, EventArgs e)
+        {
+            connectButton.Enabled = true;
+            disconnectButton.Enabled = false;
+            cBoxSelectedComPort.Enabled = true;
+            outputTextBox.Enabled = true;
+            inputTextBox.Enabled = false;
+
+            clearTextBoxes();
+            setDefaultSerialPortValues();
+            if (serialPort != null)
+            {
+                serialPort.Close();
+                serialPort = null;
+            }
+        }
+
+        //установка конфигурационных параметров
+        private void ApplyButton_Click(object sender, EventArgs e)
+        {
+            if (!portIsOpen())
+            {
+                tBoxDebug.AppendText(">>Serial port is not open" + "\n");
+                return;
+            }
+            setConfigParams();
+            showInfoDebug();
+            tBoxDebug.AppendText(">>Сonfiguration parameters changed" + "\n");
+        }
+
+        //open serial port        
         private bool serialPortConnect()
         {
             if (serialPort != null)
@@ -56,13 +100,14 @@ namespace serialPort
             try
             {
                 serialPort.Open();
-                tBoxDebug.Text = "Connect to " + cBoxSelectedComPort.SelectedItem.ToString() + " serial port.\n";
+                tBoxDebug.AppendText(">>Connect to " + cBoxSelectedComPort.SelectedItem.ToString() + " serial port.\n");
+                setConfigParams();
                 showInfoDebug();
                 
             }
             catch
             {
-                tBoxDebug.Text = "Can't connect to " + cBoxSelectedComPort.SelectedItem.ToString() + " serial port.\n";
+                tBoxDebug.AppendText(">>Can't connect to " + cBoxSelectedComPort.SelectedItem.ToString() + " serial port.\n");
                 return false;
             }
             serialPort.ErrorReceived += new SerialErrorReceivedEventHandler(ErrorHandler);
@@ -71,7 +116,7 @@ namespace serialPort
 
         }
 
-        
+        //установка параметров по умолчанию в текстовые поля
         private void setDefaultSerialPortValues()
         {
             cBoxStopBits.Text = "One";
@@ -80,6 +125,7 @@ namespace serialPort
             cBoxSpeed.Text = "9600";
         }
 
+        //проверка переменной serialPort
         private bool portIsOpen()
         {
             if (serialPort != null)
@@ -87,19 +133,19 @@ namespace serialPort
             else return false;
         }
 
-        //отправка одного символа в порт
+        //отправка данных в порт
         public void sendData(string data)
         {
             serialPort.Write(data);
-            tBoxDebug.AppendText("Sending data...\n");
+            tBoxDebug.AppendText(">>Sending data...\n");
         }
 
-        //последняя нажатая клавиша. Считывается код и передается в другой порт через функцию SedndData
+        //Обработка последней нажатой клавиши. Считывается код и передается в другой порт через функцию SendData
         private void InputTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (!portIsOpen())
             {
-                MessageBox.Show("Serial port is not open", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                outputTextBox.AppendText(">>Serial port is not open\n");
                 inputTextBox.Text = "";
                 return;
             }
@@ -119,6 +165,7 @@ namespace serialPort
         }
 
         //обработка отправленных данных в порт
+        //Событие DataReceived возникает во вторичном потоке при получении данных от объекта SerialPort.
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = (SerialPort)sender;
@@ -132,12 +179,11 @@ namespace serialPort
                 case Keys.Back:
                     if (outputTextBox.Text.Length == 0) break;
                     outputTextBox.Text = outputTextBox.Text.Substring(0, outputTextBox.Text.Length - 1);
-                    
                     break;
                 default:
                     string s = Encoding.GetEncoding("UTF-8").GetString(data);
                     outputTextBox.AppendText(s);
-                    tBoxDebug.AppendText("Receiving data...\n");
+                    tBoxDebug.AppendText(">>Receiving data...\n");
                     break;
             }          
         }
@@ -150,84 +196,113 @@ namespace serialPort
                 
                 case SerialError.Frame:
                     //Аппаратное обеспечение обнаружило ошибку кадрирования.
-                    MessageBox.Show("The hardware detected a framing error.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    outputTextBox.AppendText(">>The hardware detected a framing error.\n");
                     break;
                 case SerialError.Overrun:
                     //Произошло переполнение буфера символов.
-                    MessageBox.Show("A character-buffer overrun has occurred. The next character is lost.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    outputTextBox.AppendText(">>A character - buffer overrun has occurred.The next character is lost.\n");
                     break;
                 case SerialError.RXOver:
                     //Произошло переполнение входного буфера.
-                    MessageBox.Show("An input buffer overflow has occurred.There is either no room in the input buffer, or a character was received after the end of file(EOF) character.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    outputTextBox.AppendText(">>An input buffer overflow has occurred.\n");
                     break;
                 case SerialError.RXParity:
                     //ошибка четности.
-                    MessageBox.Show("The hardware detected a parity error.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    outputTextBox.AppendText(">>The hardware detected a parity error.\n");
                     break;
                 case SerialError.TXFull:
                     //Приложение попыталось передать символ, но буфер вывода был заполнен.
-                    MessageBox.Show("The application tried to transmit a character, but the output buffer was full.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    outputTextBox.AppendText(">>The application tried to transmit a character, but the output buffer was full.\n");
                     break;
             }
         }
-        //проверка введенного значения со значениями из списка 
-        private void validData(ComboBox comboBox, CancelEventArgs e)
+
+        private void InputTextBox_GotFocus(object sender, EventArgs e) => OldText = new StringBuilder(inputTextBox.Text);
+
+        //измения в текстовом поле input
+        private void InputTextBox_TextChanged(object sender, EventArgs e)
         {
-            bool validValue = false;
-            for (int i = 0; i < comboBox.Items.Count; i++)
+            string str = string.Empty;
+            if (!portIsOpen())
             {
-                if (comboBox.Text == comboBox.Items[i].ToString())
-                    validValue = true;
+                inputTextBox.Text = "";
+                outputTextBox.AppendText(">>Serial port is not open\n");
             }
-            if (!validValue)
+
+            byte[] data;
+            if (OldText.Length <= inputTextBox.Text.Length)
             {
-                e.Cancel = true;
-                errorProvider.SetError(comboBox, "Ivalid value");
+                str = inputTextBox.Text.Substring(OldText.Length);
+                data = Encoding.UTF8.GetBytes(str);
+                tBoxDebug.AppendText(">>Sending data...\n");
+                serialPort.RtsEnable = true;
+                serialPort.Write(data, 0, data.Length);
+                serialPort.RtsEnable = false;
+            }
+            OldText.Length = inputTextBox.Text.Length;
+        }
+
+        //перемещение курсора в конец текстового поля
+        private void InputTextBox_Click(object sender, EventArgs e)
+        {
+            if (inputTextBox.SelectionStart != inputTextBox.Text.Length)
+            {
+                inputTextBox.SelectionStart = inputTextBox.Text.Length;
+            }
+        }
+
+        //проверка зависимости StopBits от DataBits
+        private void checkCombinations(string cBoxStopBitsValue, int cBoxDataBitsValue)
+        {
+            if (cBoxStopBitsValue == "OnePointFive" &&
+                    (cBoxDataBitsValue.ToString() == Convert.ToString(6) ||
+                    cBoxDataBitsValue.ToString() == Convert.ToString(7) ||
+                    cBoxDataBitsValue.ToString() == Convert.ToString(8)))
+            {
+                tBoxDebug.AppendText(">>Invalid combination of DataBits and StopBits values\n");
+                cBoxDataBits.SelectedIndex = cBoxDataBits.FindStringExact(Convert.ToString(5));
+                showInfoDebug();
+                return;
+            }
+            else if (cBoxStopBitsValue == "Two" && cBoxDataBitsValue.ToString() == Convert.ToString(5))
+            {
+                tBoxDebug.AppendText(">>Invalid combination of DataBits and StopBits values\n");
+                cBoxDataBits.SelectedIndex = cBoxDataBits.FindStringExact(Convert.ToString(8));
+                showInfoDebug();
+                return;
             }
             else
             {
-                e.Cancel = false;
-                errorProvider.SetError(comboBox, null);
+                serialPort.DataBits = int.Parse(cBoxDataBits.SelectedItem.ToString());
             }
         }
 
-        //события обработки comboBoxes
-        private void CBoxDataBits_Validating(object sender, CancelEventArgs e)
+        //отображение информации о порте
+        private void showInfoDebug()
         {
-            validData(cBoxDataBits, e);
+            tBoxDebugPortInfo.Text = "Name: " + serialPort.PortName + "\n";
+            tBoxDebugPortInfo.AppendText("BaudRate: " + serialPort.BaudRate + "\n");
+            tBoxDebugPortInfo.AppendText("BiteSize: " + serialPort.DataBits + "\n");
+            tBoxDebugPortInfo.AppendText("StopBits: " + serialPort.StopBits + "\n");
+            tBoxDebugPortInfo.AppendText("Parity: " + serialPort.Parity + "\n");
         }
-        private void CBoxStopBits_Validating(object sender, CancelEventArgs e)
+       
+        //очистка текстовых полей
+        private void clearTextBoxes()
         {
-            validData(cBoxStopBits, e);
-        }
-        private void CBoxParity_Validating(object sender, CancelEventArgs e)
-        {
-            validData(cBoxParity, e);
-        }
-        private void CBoxSpeed_Validating(object sender, CancelEventArgs e)
-        {
-            validData(cBoxSpeed, e);
+            inputTextBox.Text = "";
+            outputTextBox.Text = "";
+            tBoxDebugPortInfo.Text = "";
+            tBoxDebug.Text = "";
         }
 
-        //События изменения comboBoxes. Если в списке выбран другой элемент, проверяем данные.
-        private void CBoxSpeed_SelectedIndexChanged(object sender, EventArgs e)
+        private StringBuilder OldText = new StringBuilder();
+
+        //установка параметров порта
+        private void setConfigParams()
         {
-            if (!portIsOpen())
-            {
-                errorProvider.SetError(cBoxSelectedComPort, "Open Serial port, please");
-                return;
-            }
-            
             serialPort.BaudRate = int.Parse(cBoxSpeed.SelectedItem.ToString());
-            showInfoDebug();
-        }
-        private void CBoxParity_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!portIsOpen())
-            {
-                errorProvider.SetError(cBoxSelectedComPort, "Open Serial port, please");
-                return;
-            }
+
             string strParity = cBoxParity.SelectedItem.ToString();
             switch (strParity)
             {
@@ -242,15 +317,6 @@ namespace serialPort
                     break;
                 default:
                     break;
-            }
-            showInfoDebug();
-        }
-        private void CBoxStopBits_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!portIsOpen())
-            {
-                errorProvider.SetError(cBoxSelectedComPort, "Open Serial port, please");
-                return;
             }
             string cBoxStopBitsValue = cBoxStopBits.SelectedItem.ToString();
             int cBoxDataBitsValue = Convert.ToInt32(cBoxDataBits.SelectedItem.ToString());
@@ -267,130 +333,12 @@ namespace serialPort
                     break;
                 default:
                     break;
-            }           
-            
-            checkCombinations(cBoxStopBitsValue, cBoxDataBitsValue);
-            showInfoDebug();
-        }
-        private void CBoxDataBits_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!portIsOpen())
-            {
-                errorProvider.SetError(cBoxSelectedComPort, "Open Serial port, please");
-                return;
             }
-            
-            string cBoxStopBitsValue = cBoxStopBits.SelectedItem.ToString();
-            int cBoxDataBitsValue = Convert.ToInt32(cBoxDataBits.SelectedItem.ToString());
+
+            cBoxStopBitsValue = cBoxStopBits.SelectedItem.ToString();
+            cBoxDataBitsValue = Convert.ToInt32(cBoxDataBits.SelectedItem.ToString());
 
             checkCombinations(cBoxStopBitsValue, cBoxDataBitsValue);
-            showInfoDebug();
-        }
-
-        //проверка зависимости StopBits от DataBits
-        private void checkCombinations(string cBoxStopBitsValue, int cBoxDataBitsValue)
-        {
-            if (cBoxStopBitsValue == "OnePointFive" &&
-                    (cBoxDataBitsValue.ToString() == Convert.ToString(6) ||
-                    cBoxDataBitsValue.ToString() == Convert.ToString(7) ||
-                    cBoxDataBitsValue.ToString() == Convert.ToString(8)))
-            {
-                MessageBox.Show("Invalid combination of DataBits and StopBits values", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                cBoxDataBits.SelectedIndex = cBoxDataBits.FindStringExact(Convert.ToString(5));
-                showInfoDebug();
-                return;
-            }
-            else if (cBoxStopBitsValue == "Two" && cBoxDataBitsValue.ToString() == Convert.ToString(5))
-            {
-                MessageBox.Show("Invalid combination of DataBits and StopBits values", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                cBoxDataBits.SelectedIndex = cBoxDataBits.FindStringExact(Convert.ToString(8));
-                showInfoDebug();
-                return;
-            }
-            else
-            {
-                serialPort.DataBits = int.Parse(cBoxDataBits.SelectedItem.ToString());
-            }
-        }
-
-        //отображение информации о порте
-        private void showInfoDebug()
-        {
-            tBoxDebugPortInfo.Text = "Name:" + serialPort.PortName + "\n";
-            tBoxDebugPortInfo.AppendText("BaudRate:" + serialPort.BaudRate + "\n");
-            tBoxDebugPortInfo.AppendText("BiteSize:" + serialPort.DataBits + "\n");
-            tBoxDebugPortInfo.AppendText("StopBits:" + serialPort.StopBits + "\n");
-            tBoxDebugPortInfo.AppendText("Parity:" + serialPort.Parity + "\n");
-        }
-
-        //проверка текста в модуле input (изменен до открытия порта). MessageBox с предупреждением
-        private void OutputTextBox_TextChanged(object sender, EventArgs e)
-        {
-            if (!portIsOpen())
-            {
-                inputTextBox.Text = "";
-                MessageBox.Show("Serial port is not open", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-       
-        private void clearTextBoxes()
-        {
-            inputTextBox.Text = "";
-            outputTextBox.Text = "";
-            tBoxDebugPortInfo.Text = "";
-            tBoxDebug.Text = "";
-        }
-
-        private void DisconnectButton_Click(object sender, EventArgs e)
-        {
-            connectButton.Enabled = true;
-            disconnectButton.Enabled = false;
-            cBoxSelectedComPort.Enabled = true;
-
-            clearTextBoxes();
-            setDefaultSerialPortValues();
-            if (serialPort != null)
-            {
-                serialPort.Close();
-                serialPort = null;
-            }
-        }
-
-        private StringBuilder OldText = new StringBuilder();
-        private void InputTextBox_GotFocus(object sender, EventArgs e)
-        {
-            OldText = new StringBuilder(inputTextBox.Text);
-            
-        }
-
-        private void InputTextBox_TextChanged(object sender, EventArgs e)
-        {
-            string str = string.Empty;
-            if (!portIsOpen())
-            {
-                inputTextBox.Text = "";
-                MessageBox.Show("Serial port is not open", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-            byte[] data;
-            if (OldText.Length <= inputTextBox.Text.Length)
-            {
-                str = inputTextBox.Text.Substring(OldText.Length);
-                data = Encoding.UTF8.GetBytes(str);
-                tBoxDebug.AppendText("Sending data...\n");
-                serialPort.RtsEnable = true;
-                serialPort.Write(data, 0, data.Length);
-                serialPort.RtsEnable = false; 
-            }
-            OldText.Length = inputTextBox.Text.Length;
-        }
-
-        private void InputTextBox_Click(object sender, EventArgs e)
-        {
-            if (inputTextBox.SelectionStart != inputTextBox.Text.Length)
-            {
-                inputTextBox.SelectionStart = inputTextBox.Text.Length;
-            }
         }
     }
 }
