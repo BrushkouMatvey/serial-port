@@ -44,6 +44,9 @@ namespace serialPort
             tBoxDebug.ReadOnly = true;
             tBoxDebugPortInfo.ReadOnly = true;
 
+            textBoxReceiverAddress.Enabled = false;
+            textBoxSenderAddress.Enabled = false;
+
         }
 
         //обработка события нажати на кнопку Connect
@@ -57,6 +60,8 @@ namespace serialPort
                 cBoxSelectedComPort.Enabled = false;
                 inputTextBox.Enabled = true;
                 outputTextBox.Enabled = true;
+                textBoxReceiverAddress.Enabled = true;
+                textBoxSenderAddress.Enabled = true;
             }
         }
 
@@ -68,6 +73,9 @@ namespace serialPort
             cBoxSelectedComPort.Enabled = true;
             outputTextBox.Enabled = true;
             inputTextBox.Enabled = false;
+            textBoxReceiverAddress.Enabled = false;
+            textBoxSenderAddress.Enabled = false;
+
 
             clearTextBoxes();
             setDefaultSerialPortValues();
@@ -301,6 +309,8 @@ namespace serialPort
             outputTextBox.Text = "";
             tBoxDebugPortInfo.Text = "";
             tBoxDebug.Text = "";
+            textBoxReceiverAddress.Text = "";
+            textBoxSenderAddress.Text = "";
         }
 
         private StringBuilder OldText = new StringBuilder();
