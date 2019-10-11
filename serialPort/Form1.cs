@@ -20,8 +20,8 @@ namespace serialPort
         ////////////////lab1///////////////
 
         private SerialPort serialPort;
-        Packet packet;
-        private String inputTextBoxStrToPacket;
+        Package package;
+        private String inputTextBoxStrToPackage;
 
         bool isSourceAddressSet = false, isDestinationAddressSet = false;
         public Form1()
@@ -31,7 +31,7 @@ namespace serialPort
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            inputTextBoxStrToPacket = string.Empty;
+            inputTextBoxStrToPackage = string.Empty;
             string[] ports = SerialPort.GetPortNames();
             cBoxSelectedComPort.Items.AddRange(ports);
 
@@ -60,7 +60,7 @@ namespace serialPort
 
             textBoxSourceAddress.Enabled = false;
             textBoxDestinationAddress.Enabled = false;
-            packet = new Packet();
+            package = new Package();
 
         } 
 
@@ -93,9 +93,9 @@ namespace serialPort
             textBoxSourceAddress.Enabled = false;
             setSourceButton.Enabled = false;
             setDestinationButton.Enabled = false;
-            packet.DestinationAddress = 0;
-            packet.SourceAddress = 0;
-            packet.Fcs = 0;
+            package.DestinationAddress = 0;
+            package.SourceAddress = 0;
+            package.Fcs = 0;
             checkBoxErrorSimulation.Checked = false;
 
             clearTextBoxes();
@@ -318,19 +318,19 @@ namespace serialPort
             {
                 if (inputTextBox.Text.Substring(OldText.Length)[0] < 'А' || inputTextBox.Text.Substring(OldText.Length)[0] > 'я')
                 {
-                    inputTextBoxStrToPacket += inputTextBox.Text.Substring(OldText.Length);
-                    if (inputTextBoxStrToPacket.Length == 7)
+                    inputTextBoxStrToPackage += inputTextBox.Text.Substring(OldText.Length);
+                    if (inputTextBoxStrToPackage.Length == 7)
                     {
-                        data = Encoding.UTF8.GetBytes(inputTextBoxStrToPacket);
-                        fillPacket(data);
-                        byte[] sendMsg = bitStuffing(packet);
-                        if (packet.Fcs == 0)
+                        data = Encoding.UTF8.GetBytes(inputTextBoxStrToPackage);
+                        fillPackage(data);
+                        byte[] sendMsg = bitStuffing(package);
+                        if (package.Fcs == 0)
                         {
-                            sendPacket(sendMsg);
+                            sendPackage(sendMsg);
                         }
                         string hex = ByteArrayToString(sendMsg);
                         tBoxDebug.AppendText(">>" + hex + "\n");
-                        inputTextBoxStrToPacket = string.Empty;
+                        inputTextBoxStrToPackage = string.Empty;
                     }
                 }
                 else
@@ -347,20 +347,20 @@ namespace serialPort
             return BitConverter.ToString(ba).Replace("-", "");
         }
         
-        public void sendPacket(byte[] allPacketInfo)
+        public void sendPackage(byte[] allPackageInfo)
         {
-            serialPort.Write(allPacketInfo, 0, allPacketInfo.Length);
+            serialPort.Write(allPackageInfo, 0, allPackageInfo.Length);
             tBoxDebug.AppendText(">>" + "Sending data..." + "\n");
         }
 
-        private void fillPacket(byte[] data)
+        private void fillPackage(byte[] data)
         {
             if (checkBoxErrorSimulation.Checked)
-                packet.Fcs = 1;
+                package.Fcs = 1;
             else
-                packet.Fcs = 0;
+                package.Fcs = 0;
 
-            packet.Data = data;
+            package.Data = data;
             showInfoDebug();
         }
         
@@ -369,23 +369,22 @@ namespace serialPort
             SerialPort sp = (SerialPort)sender;
             byte[] data = new byte[sp.BytesToRead + 1];
             sp.Read(data, 0, data.Length);
-            String stringPacketInfo3 = string.Join(" ", data.Select(x => Convert.ToString(x, 2).PadLeft(8, '0')));
             byte[] infoAfterBitStuffing = deBitStuffing(data);
-            String stringPacketInfo4 = string.Join(" ", infoAfterBitStuffing.Select(x => Convert.ToString(x, 2).PadLeft(8, '0')));
-            Packet packet = ByteArrayToObject(infoAfterBitStuffing);
-            if (packet.DestinationAddress != Convert.ToByte(textBoxSourceAddress.Text))
+
+            Package package = ByteArrayToObject(infoAfterBitStuffing);
+            if (package.DestinationAddress != Convert.ToByte(textBoxSourceAddress.Text))
                 return;
-            string s = Encoding.GetEncoding("UTF-8").GetString(packet.Data);
+            string s = Encoding.GetEncoding("UTF-8").GetString(package.Data);
             tBoxDebug.AppendText(">>" + "Receiving data..." + "\n");
             outputTextBox.AppendText(s);
         }
 
-        public byte[] bitStuffing(Packet packet)
+        public byte[] bitStuffing(Package package)
         {
-            byte[] allPacketInfo = ObjectToByteArray(packet);
+            byte[] allPackageInfo = ObjectToByteArray(package);
 
-            String stringPacketInfo = string.Join("", allPacketInfo.Select(x => Convert.ToString(x, 2).PadLeft(8, '0'))).Substring(8);
-            string resultStr = stringPacketInfo.Replace("0000111", "00001111");
+            String stringPackageInfo = string.Join("", allPackageInfo.Select(x => Convert.ToString(x, 2).PadLeft(8, '0'))).Substring(8);
+            string resultStr = stringPackageInfo.Replace("0000111", "00001111");
 
 
             byte[] resultWithoutFlag = Enumerable.Range(0, resultStr.Length / 8).
@@ -405,10 +404,10 @@ namespace serialPort
             return result;
         }
 
-        public byte[] deBitStuffing(byte[] packet)
+        public byte[] deBitStuffing(byte[] package)
         {
-            String stringPacketInfo = string.Join("", packet.Select(x => Convert.ToString(x, 2).PadLeft(8, '0'))).Substring(8);
-            string resultStr = stringPacketInfo.Replace("00001111", "0000111");
+            String stringPackageInfo = string.Join("", package.Select(x => Convert.ToString(x, 2).PadLeft(8, '0'))).Substring(8);
+            string resultStr = stringPackageInfo.Replace("00001111", "0000111");
             byte[] resultWithoutFlag = Enumerable.Range(0, resultStr.Length / 8).
                        Select(pos => Convert.ToByte(resultStr.Substring(pos * 8, 8), 2)).ToArray();
 
@@ -426,33 +425,33 @@ namespace serialPort
             return result;
         }
 
-        public byte[] ObjectToByteArray(Packet packet)
+        public byte[] ObjectToByteArray(Package package)
         {
             byte[] result = new byte[11];
-            result[0] = packet.Flag;
-            result[1] = packet.DestinationAddress; 
-            result[2] = packet.SourceAddress;
+            result[0] = package.Flag;
+            result[1] = package.DestinationAddress; 
+            result[2] = package.SourceAddress;
             for (int i = 3; i < 10; i++)
             {
-                result[i] = packet.Data[i - 3];
+                result[i] = package.Data[i - 3];
             }
-            result[10] = packet.Fcs;
+            result[10] = package.Fcs;
             return result;
         }
 
-        public Packet ByteArrayToObject(byte[] data)
+        public Package ByteArrayToObject(byte[] data)
         {
-            return new Packet(data[1], data[2], getPacketData(data), data[10]);
+            return new Package(data[1], data[2], getPackageData(data), data[10]);
         }
 
-        public byte[] getPacketData(byte[] packetInfo)
+        public byte[] getPackageData(byte[] packageInfo)
         {
-            byte[] packetData = new byte[7];
+            byte[] packageData = new byte[7];
             for (int i = 3; i < 10; i++)
             {
-                packetData[i - 3] = packetInfo[i];
+                packageData[i - 3] = packageInfo[i];
             }
-            return packetData;
+            return packageData;
         }
 
         private void SetSourceButton_Click(object sender, EventArgs e)
@@ -474,7 +473,7 @@ namespace serialPort
                 tBoxDebug.AppendText(">>Source address must be different from Distination address\n");
                 return;
             }
-            packet.SourceAddress = Convert.ToByte(textBoxSourceAddress.Text);
+            package.SourceAddress = Convert.ToByte(textBoxSourceAddress.Text);
             tBoxDebug.AppendText(">>Source address is set\n");
             showInfoDebug();
             isSourceAddressSet = true;
@@ -499,7 +498,7 @@ namespace serialPort
                 tBoxDebug.AppendText(">>Distination address must be different from Source address\n");
                 return;
             }
-            packet.DestinationAddress = Convert.ToByte(textBoxDestinationAddress.Text);
+            package.DestinationAddress = Convert.ToByte(textBoxDestinationAddress.Text);
             tBoxDebug.AppendText(">>Distination address is set\n");
             showInfoDebug();
             isDestinationAddressSet = true;
@@ -513,7 +512,7 @@ namespace serialPort
         }
     }
 
-    public class Packet
+    public class Package
     {
         public byte Flag { get; set; } = 0x0E;
         public byte SourceAddress { get; set; }
@@ -521,13 +520,13 @@ namespace serialPort
         public byte[] Data { get; set; }
         public byte Fcs { get; set; }
 
-        public Packet() { }
-        public Packet(byte[] data, byte fcs)
+        public Package() { }
+        public Package(byte[] data, byte fcs)
         {
             this.Data = data;
             this.Fcs = fcs;
         }
-        public Packet(byte destinationAddress, byte sourceAddress, byte[] data, byte fcs)
+        public Package(byte destinationAddress, byte sourceAddress, byte[] data, byte fcs)
         {
             this.SourceAddress = sourceAddress;
             this.DestinationAddress = destinationAddress;
