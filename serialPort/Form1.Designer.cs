@@ -34,11 +34,11 @@
             this.outputTextBox = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.Adresses = new System.Windows.Forms.GroupBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.textBoxSenderAddress = new System.Windows.Forms.TextBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.textBoxReceiverAddress = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.checkBoxErrorSimulation = new System.Windows.Forms.CheckBox();
+            this.textBoxSourceAddress = new System.Windows.Forms.TextBox();
+            this.setDestinationButton = new System.Windows.Forms.Button();
+            this.textBoxDestinationAddress = new System.Windows.Forms.TextBox();
+            this.setSourceButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -112,11 +112,11 @@
             // 
             // Adresses
             // 
-            this.Adresses.Controls.Add(this.checkBox1);
-            this.Adresses.Controls.Add(this.textBoxSenderAddress);
-            this.Adresses.Controls.Add(this.button2);
-            this.Adresses.Controls.Add(this.textBoxReceiverAddress);
-            this.Adresses.Controls.Add(this.button1);
+            this.Adresses.Controls.Add(this.checkBoxErrorSimulation);
+            this.Adresses.Controls.Add(this.textBoxSourceAddress);
+            this.Adresses.Controls.Add(this.setDestinationButton);
+            this.Adresses.Controls.Add(this.textBoxDestinationAddress);
+            this.Adresses.Controls.Add(this.setSourceButton);
             this.Adresses.Controls.Add(this.label3);
             this.Adresses.Controls.Add(this.label2);
             this.Adresses.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -127,58 +127,60 @@
             this.Adresses.TabStop = false;
             this.Adresses.Text = "Packet transmission control";
             // 
-            // checkBox1
+            // checkBoxErrorSimulation
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.checkBox1.Location = new System.Drawing.Point(16, 92);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(150, 24);
-            this.checkBox1.TabIndex = 27;
-            this.checkBox1.Text = "Error simulation";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBoxErrorSimulation.AutoSize = true;
+            this.checkBoxErrorSimulation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.checkBoxErrorSimulation.Location = new System.Drawing.Point(16, 92);
+            this.checkBoxErrorSimulation.Name = "checkBoxErrorSimulation";
+            this.checkBoxErrorSimulation.Size = new System.Drawing.Size(150, 24);
+            this.checkBoxErrorSimulation.TabIndex = 27;
+            this.checkBoxErrorSimulation.Text = "Error simulation";
+            this.checkBoxErrorSimulation.UseVisualStyleBackColor = true;
             // 
-            // textBoxSenderAddress
+            // textBoxSourceAddress
             // 
-            this.textBoxSenderAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBoxSenderAddress.Location = new System.Drawing.Point(72, 26);
-            this.textBoxSenderAddress.MinimumSize = new System.Drawing.Size(0, 26);
-            this.textBoxSenderAddress.Name = "textBoxSenderAddress";
-            this.textBoxSenderAddress.Size = new System.Drawing.Size(177, 28);
-            this.textBoxSenderAddress.TabIndex = 26;
-            this.textBoxSenderAddress.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxAddress_KeyPress);
+            this.textBoxSourceAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.textBoxSourceAddress.Location = new System.Drawing.Point(111, 26);
+            this.textBoxSourceAddress.MinimumSize = new System.Drawing.Size(0, 26);
+            this.textBoxSourceAddress.Name = "textBoxSourceAddress";
+            this.textBoxSourceAddress.Size = new System.Drawing.Size(138, 28);
+            this.textBoxSourceAddress.TabIndex = 26;
+            this.textBoxSourceAddress.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxAddress_KeyPress);
             // 
-            // button2
+            // setDestinationButton
             // 
-            this.button2.Cursor = System.Windows.Forms.Cursors.Default;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button2.Location = new System.Drawing.Point(255, 57);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(123, 28);
-            this.button2.TabIndex = 25;
-            this.button2.Text = "Set receiver";
-            this.button2.UseVisualStyleBackColor = true;
+            this.setDestinationButton.Cursor = System.Windows.Forms.Cursors.Default;
+            this.setDestinationButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.setDestinationButton.Location = new System.Drawing.Point(255, 57);
+            this.setDestinationButton.Name = "setDestinationButton";
+            this.setDestinationButton.Size = new System.Drawing.Size(123, 28);
+            this.setDestinationButton.TabIndex = 25;
+            this.setDestinationButton.Text = "Set dest.";
+            this.setDestinationButton.UseVisualStyleBackColor = true;
+            this.setDestinationButton.Click += new System.EventHandler(this.SetDestinationButton_Click);
             // 
-            // textBoxReceiverAddress
+            // textBoxDestinationAddress
             // 
-            this.textBoxReceiverAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBoxReceiverAddress.Location = new System.Drawing.Point(72, 58);
-            this.textBoxReceiverAddress.MinimumSize = new System.Drawing.Size(0, 26);
-            this.textBoxReceiverAddress.Name = "textBoxReceiverAddress";
-            this.textBoxReceiverAddress.Size = new System.Drawing.Size(177, 28);
-            this.textBoxReceiverAddress.TabIndex = 24;
-            this.textBoxReceiverAddress.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxAddress_KeyPress);
+            this.textBoxDestinationAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.textBoxDestinationAddress.Location = new System.Drawing.Point(111, 58);
+            this.textBoxDestinationAddress.MinimumSize = new System.Drawing.Size(0, 26);
+            this.textBoxDestinationAddress.Name = "textBoxDestinationAddress";
+            this.textBoxDestinationAddress.Size = new System.Drawing.Size(138, 28);
+            this.textBoxDestinationAddress.TabIndex = 24;
+            this.textBoxDestinationAddress.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxAddress_KeyPress);
             // 
-            // button1
+            // setSourceButton
             // 
-            this.button1.Cursor = System.Windows.Forms.Cursors.Default;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button1.Location = new System.Drawing.Point(255, 25);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(123, 28);
-            this.button1.TabIndex = 20;
-            this.button1.Text = "Set sender";
-            this.button1.UseVisualStyleBackColor = true;
+            this.setSourceButton.Cursor = System.Windows.Forms.Cursors.Default;
+            this.setSourceButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.setSourceButton.Location = new System.Drawing.Point(255, 25);
+            this.setSourceButton.Name = "setSourceButton";
+            this.setSourceButton.Size = new System.Drawing.Size(123, 28);
+            this.setSourceButton.TabIndex = 20;
+            this.setSourceButton.Text = "Set source";
+            this.setSourceButton.UseVisualStyleBackColor = true;
+            this.setSourceButton.Click += new System.EventHandler(this.SetSourceButton_Click);
             // 
             // label3
             // 
@@ -186,9 +188,9 @@
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label3.Location = new System.Drawing.Point(12, 63);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(66, 18);
+            this.label3.Size = new System.Drawing.Size(119, 18);
             this.label3.TabIndex = 23;
-            this.label3.Text = "Receiver";
+            this.label3.Text = "Destination addr.";
             // 
             // label2
             // 
@@ -196,9 +198,9 @@
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label2.Location = new System.Drawing.Point(12, 31);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(55, 18);
+            this.label2.Size = new System.Drawing.Size(93, 18);
             this.label2.TabIndex = 21;
-            this.label2.Text = "Sender";
+            this.label2.Text = "Source addr.";
             // 
             // groupBox4
             // 
@@ -397,6 +399,7 @@
             this.tBoxDebugPortInfo.Location = new System.Drawing.Point(3, 3);
             this.tBoxDebugPortInfo.Multiline = true;
             this.tBoxDebugPortInfo.Name = "tBoxDebugPortInfo";
+            this.tBoxDebugPortInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tBoxDebugPortInfo.Size = new System.Drawing.Size(145, 92);
             this.tBoxDebugPortInfo.TabIndex = 16;
             // 
@@ -431,7 +434,7 @@
             this.inputTextBox.TabIndex = 7;
             this.inputTextBox.Click += new System.EventHandler(this.InputTextBox_Click);
             this.inputTextBox.TextChanged += new System.EventHandler(this.InputTextBox_TextChanged);
-            this.inputTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InputTextBox_KeyDown);
+            this.inputTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.InputTextBox_KeyPress);
             // 
             // Form1
             // 
@@ -495,12 +498,12 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button setSourceButton;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.TextBox textBoxReceiverAddress;
-        private System.Windows.Forms.TextBox textBoxSenderAddress;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Button setDestinationButton;
+        private System.Windows.Forms.TextBox textBoxDestinationAddress;
+        private System.Windows.Forms.TextBox textBoxSourceAddress;
+        private System.Windows.Forms.CheckBox checkBoxErrorSimulation;
     }
 }
 
