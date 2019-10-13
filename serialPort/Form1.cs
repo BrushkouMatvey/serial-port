@@ -344,7 +344,7 @@ namespace serialPort
 
         public static string ByteArrayToString(byte[] ba)
         {
-            return BitConverter.ToString(ba).Replace("-", "");
+            return BitConverter.ToString(ba).Replace("-", " ");
         }
         
         public void sendPackage(byte[] allPackageInfo)
@@ -386,9 +386,31 @@ namespace serialPort
             String stringPackageInfo = string.Join("", allPackageInfo.Select(x => Convert.ToString(x, 2).PadLeft(8, '0'))).Substring(8);
             string resultStr = stringPackageInfo.Replace("0000111", "00001111");
 
+            var numOfBytes = (int)Math.Ceiling(resultStr.Length / 8m);
+            byte[] resultWithoutFlag = new byte[numOfBytes];
+            string temp;
+            for (int i = 0; i<numOfBytes;i++)
+            {
+                if(resultStr.Substring(8).Length < 8)
+                {
+                    resultWithoutFlag[i] = Convert.ToByte(resultStr.Substring(0, 8), 2);
+             
+                    resultWithoutFlag[i+1] = Convert.ToByte(resultStr.Substring(8), 2);
+                    break;
+                }
+                else
+                {
+                    resultWithoutFlag[i] = Convert.ToByte(resultStr.Substring(0, 8), 2);
+                    resultStr = resultStr.Substring(8);
+                }
+            }
 
-            byte[] resultWithoutFlag = Enumerable.Range(0, resultStr.Length / 8).
-                        Select(pos => Convert.ToByte(resultStr.Substring(pos * 8, 8), 2)).ToArray();
+
+
+
+
+            //byte[] resultWithoutFlag = Enumerable.Range(0, resultStr.Substring(0,8).Length).
+            //            Select(pos => Convert.ToByte(resultStr.Substring(pos * 8, 8), 2)).ToArray();
 
 
             String flagStr = "00001110";
