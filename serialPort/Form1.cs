@@ -221,7 +221,7 @@ namespace serialPort
                 return true;
             }
         }
-        
+
         private void showInfoDebug()
         {
             tBoxDebugPortInfo.Text = "Name: " + serialPort.PortName + "\n";
@@ -244,7 +244,7 @@ namespace serialPort
         }
 
         private StringBuilder OldText = new StringBuilder();
-        
+
         private bool setConfigParams()
         {
             serialPort.BaudRate = int.Parse(cBoxSpeed.SelectedItem.ToString());
@@ -290,7 +290,7 @@ namespace serialPort
         }
 
         ////////////////lab2///////////////
-            
+
         private void TextBoxAddress_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (Regex.IsMatch(e.KeyChar.ToString(), "[0-9\b.]"))
@@ -304,7 +304,7 @@ namespace serialPort
                 e.Handled = false;
             else e.Handled = true;
         }
-        
+
         private void InputTextBox_TextChanged(object sender, EventArgs e)
         {
             if (!portIsOpen())
@@ -346,7 +346,7 @@ namespace serialPort
         {
             return BitConverter.ToString(ba).Replace("-", " ");
         }
-        
+
         public void sendPackage(byte[] allPackageInfo)
         {
             serialPort.Write(allPackageInfo, 0, allPackageInfo.Length);
@@ -363,7 +363,7 @@ namespace serialPort
             package.Data = data;
             showInfoDebug();
         }
-        
+
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = (SerialPort)sender;
@@ -389,12 +389,12 @@ namespace serialPort
             var numOfBytes = (int)Math.Ceiling(resultStr.Length / 8m);
             byte[] resultWithoutFlag = new byte[numOfBytes];
             string temp;
-            for (int i = 0; i<numOfBytes;i++)
+            for (int i = 0; i < numOfBytes; i++)
             {
-                if(resultStr.Substring(8).Length < 8)
+                if (resultStr.Substring(8).Length < 8 && resultStr.Substring(8).Length != 0)
                 {
                     resultWithoutFlag[i] = Convert.ToByte(resultStr.Substring(0, 8), 2);
-                    resultWithoutFlag[i+1] = Convert.ToByte(resultStr.Substring(8), 2);
+                    resultWithoutFlag[i + 1] = Convert.ToByte(resultStr.Substring(8), 2);
                     break;
                 }
                 else
@@ -442,7 +442,7 @@ namespace serialPort
         {
             byte[] result = new byte[11];
             result[0] = package.Flag;
-            result[1] = package.DestinationAddress; 
+            result[1] = package.DestinationAddress;
             result[2] = package.SourceAddress;
             for (int i = 3; i < 10; i++)
             {
