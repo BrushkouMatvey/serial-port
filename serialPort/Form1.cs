@@ -394,7 +394,6 @@ namespace serialPort
                 if(resultStr.Substring(8).Length < 8)
                 {
                     resultWithoutFlag[i] = Convert.ToByte(resultStr.Substring(0, 8), 2);
-             
                     resultWithoutFlag[i+1] = Convert.ToByte(resultStr.Substring(8), 2);
                     break;
                 }
@@ -404,14 +403,6 @@ namespace serialPort
                     resultStr = resultStr.Substring(8);
                 }
             }
-
-
-
-
-
-            //byte[] resultWithoutFlag = Enumerable.Range(0, resultStr.Substring(0,8).Length).
-            //            Select(pos => Convert.ToByte(resultStr.Substring(pos * 8, 8), 2)).ToArray();
-
 
             String flagStr = "00001110";
             byte[] flag = Enumerable.Range(0, flagStr.Length / 8).
