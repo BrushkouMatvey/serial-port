@@ -62,7 +62,7 @@ namespace serialPort
             textBoxDestinationAddress.Enabled = false;
             package = new Package();
 
-        } 
+        }
 
         private void ConnectButton_Click(object sender, EventArgs e)
         {
@@ -95,7 +95,7 @@ namespace serialPort
             setDestinationButton.Enabled = false;
             package.DestinationAddress = 0;
             package.SourceAddress = 0;
-            package.Fcs = 0;
+            package.Crc = 0;
             checkBoxErrorSimulation.Checked = false;
 
             clearTextBoxes();
@@ -105,13 +105,14 @@ namespace serialPort
                 serialPort.Close();
                 serialPort = null;
             }
-        } 
+        }
 
         private void ApplyButton_Click(object sender, EventArgs e)
         {
             if (!portIsOpen())
             {
-                tBoxDebug.AppendText(">>Serial port is not open" + "\n");
+                tBoxDebug.AppendText(">>Serial port is not open");
+                tBoxDebug.AppendText(Environment.NewLine);
                 return;
             }
             if (!setConfigParams())
@@ -119,9 +120,10 @@ namespace serialPort
                 return;
             }
             showInfoDebug();
-            tBoxDebug.AppendText(">>Сonfiguration parameters changed" + "\n");
+            tBoxDebug.AppendText(">>Сonfiguration parameters changed");
+            tBoxDebug.AppendText(Environment.NewLine);
         }
-        
+
         private bool serialPortConnect()
         {
             if (serialPort != null)
@@ -131,14 +133,16 @@ namespace serialPort
             try
             {
                 serialPort.Open();
-                tBoxDebug.AppendText(">>Connect to " + cBoxSelectedComPort.SelectedItem.ToString() + " serial port.\n");
+                tBoxDebug.AppendText(">>Connect to " + cBoxSelectedComPort.SelectedItem.ToString() + " serial port.");
+                tBoxDebug.AppendText(Environment.NewLine);
                 setConfigParams();
                 showInfoDebug();
 
             }
             catch
             {
-                tBoxDebug.AppendText(">>Can't connect to " + cBoxSelectedComPort.SelectedItem.ToString() + " serial port.\n");
+                tBoxDebug.AppendText(">>Can't connect to " + cBoxSelectedComPort.SelectedItem.ToString() + " serial port.");
+                tBoxDebug.AppendText(Environment.NewLine);
                 serialPort.Close();
                 serialPort = null;
                 return false;
@@ -148,7 +152,7 @@ namespace serialPort
             return true;
 
         }
-        
+
         private void setDefaultSerialPortValues()
         {
             cBoxStopBits.Text = "One";
@@ -156,14 +160,14 @@ namespace serialPort
             cBoxDataBits.Text = "8";
             cBoxSpeed.Text = "9600";
         }
-        
+
         private bool portIsOpen()
         {
             if (serialPort != null)
                 return true;
             else return false;
         }
-        
+
         private void ErrorHandler(object sender, SerialErrorReceivedEventArgs e)
         {
             switch (e.EventType)
@@ -187,7 +191,7 @@ namespace serialPort
         }
 
         private void InputTextBox_GotFocus(object sender, EventArgs e) => OldText = new StringBuilder(inputTextBox.Text);
-        
+
         private void InputTextBox_Click(object sender, EventArgs e)
         {
             if (inputTextBox.SelectionStart != inputTextBox.Text.Length)
@@ -195,7 +199,7 @@ namespace serialPort
                 inputTextBox.SelectionStart = inputTextBox.Text.Length;
             }
         }
-        
+
         private bool checkCombinations(string cBoxStopBitsValue, int cBoxDataBitsValue)
         {
             if (cBoxStopBitsValue == "OnePointFive" &&
@@ -203,14 +207,16 @@ namespace serialPort
                     cBoxDataBitsValue.ToString() == Convert.ToString(7) ||
                     cBoxDataBitsValue.ToString() == Convert.ToString(8)))
             {
-                tBoxDebug.AppendText(">>Invalid combination of DataBits and StopBits values\n");
+                tBoxDebug.AppendText(">>Invalid combination of DataBits and StopBits values");
+                tBoxDebug.AppendText(Environment.NewLine);
                 cBoxDataBits.SelectedIndex = cBoxDataBits.FindStringExact(Convert.ToString(5));
                 showInfoDebug();
                 return false;
             }
             else if (cBoxStopBitsValue == "Two" && cBoxDataBitsValue.ToString() == Convert.ToString(5))
             {
-                tBoxDebug.AppendText(">>Invalid combination of DataBits and StopBits values\n");
+                tBoxDebug.AppendText(">>Invalid combination of DataBits and StopBits values");
+                tBoxDebug.AppendText(Environment.NewLine);
                 cBoxDataBits.SelectedIndex = cBoxDataBits.FindStringExact(Convert.ToString(8));
                 showInfoDebug();
                 return false;
@@ -244,7 +250,6 @@ namespace serialPort
         }
 
         private StringBuilder OldText = new StringBuilder();
-
         private bool setConfigParams()
         {
             serialPort.BaudRate = int.Parse(cBoxSpeed.SelectedItem.ToString());
@@ -307,6 +312,8 @@ namespace serialPort
 
         private void InputTextBox_TextChanged(object sender, EventArgs e)
         {
+            string hex;
+
             if (!portIsOpen())
             {
                 tBoxDebug.Text = "";
@@ -321,15 +328,70 @@ namespace serialPort
                     inputTextBoxStrToPackage += inputTextBox.Text.Substring(OldText.Length);
                     if (inputTextBoxStrToPackage.Length == 7)
                     {
+                        package.Flag = 0x0E;
+                        package.DestinationAddress = Convert.ToByte(textBoxDestinationAddress.Text);
+                        package.SourceAddress = Convert.ToByte(textBoxSourceAddress.Text);
                         data = Encoding.UTF8.GetBytes(inputTextBoxStrToPackage);
                         fillPackage(data);
-                        byte[] sendMsg = bitStuffing(package);
-                        if (package.Fcs == 0)
+
+                        byte[] allPackageInfo = ObjectToByteArray(package);
+
+                        String stringPackageInfo = string.Join("", allPackageInfo.Select(x => Convert.ToString(x, 2).PadLeft(8, '0'))).Substring(0, 8 * (allPackageInfo.Length - 1));
+                        String CRCcode = createCRC(stringPackageInfo);
+                        CRCcode = CRCcode.PadLeft(8, '0');
+
+                        byte[] crc = Enumerable.Range(0, CRCcode.Length / 8).
+                        Select(pos => Convert.ToByte(CRCcode.Substring(pos * 8, 8), 2)).ToArray();
+                        package.Crc = crc[0];
+
+                        tBoxDebug.AppendText(">>CRC code: " + package.Crc);
+                        tBoxDebug.AppendText(Environment.NewLine);
+
+                        byte[] allPackageInfoWithCRC = ObjectToByteArray(package);
+                        String stringPackageInfoWithoutCRC = string.Join("", allPackageInfoWithCRC.Select(x => Convert.ToString(x, 2).PadLeft(8, '0'))).Substring(0, 8 * (allPackageInfoWithCRC.Length - 1));
+
+                        byte[] sendMsg;
+                        if (checkBoxErrorSimulation.Checked)
                         {
-                            sendPackage(sendMsg);
+                            Random randomNumber = new Random();
+                            int rnd = randomNumber.Next(0, stringPackageInfoWithoutCRC.Length - 1);
+
+
+                            if (stringPackageInfoWithoutCRC[rnd] == '1')
+                            {
+                                stringPackageInfoWithoutCRC = stringPackageInfoWithoutCRC.Remove(rnd, 1);
+                                stringPackageInfoWithoutCRC = stringPackageInfoWithoutCRC.Insert(rnd, "0");
+                            }
+                            else
+                            {
+                                stringPackageInfoWithoutCRC = stringPackageInfoWithoutCRC.Remove(rnd, 1);
+                                stringPackageInfoWithoutCRC = stringPackageInfoWithoutCRC.Insert(rnd, "1");
+                            }
+
+
+                            sendMsg = Enumerable.Range(0, (stringPackageInfoWithoutCRC + CRCcode).Length / 8).Select(pos => Convert.ToByte((stringPackageInfoWithoutCRC + CRCcode).Substring(pos * 8, 8), 2)).ToArray();
+
+                            package.Flag = sendMsg[0];
+                            package.DestinationAddress = sendMsg[1];
+                            package.SourceAddress = sendMsg[2];
+                            package.Data = getPackageData(sendMsg);
+
+                            hex = ByteArrayToString(sendMsg);
+                            tBoxDebug.AppendText(">>Create error");
+                            tBoxDebug.AppendText(Environment.NewLine);
+                            tBoxDebug.AppendText(">>" + hex);
+                            tBoxDebug.AppendText(Environment.NewLine);
                         }
-                        string hex = ByteArrayToString(sendMsg);
-                        tBoxDebug.AppendText(">>" + hex + "\n");
+                        sendMsg = bitStuffing(package);
+                        String stringAfterBitStuffing = string.Join("", sendMsg.Select(x => Convert.ToString(x, 2).PadLeft(8, '0')));
+                        
+
+                        sendPackage(sendMsg);
+
+                        hex = ByteArrayToString(sendMsg);
+                        tBoxDebug.AppendText(">>" + hex);
+                        tBoxDebug.AppendText(Environment.NewLine);
+                        tBoxDebug.AppendText(Environment.NewLine);
                         inputTextBoxStrToPackage = string.Empty;
                     }
                 }
@@ -350,16 +412,10 @@ namespace serialPort
         public void sendPackage(byte[] allPackageInfo)
         {
             serialPort.Write(allPackageInfo, 0, allPackageInfo.Length);
-            tBoxDebug.AppendText(">>" + "Sending data..." + "\n");
         }
 
         private void fillPackage(byte[] data)
         {
-            if (checkBoxErrorSimulation.Checked)
-                package.Fcs = 1;
-            else
-                package.Fcs = 0;
-
             package.Data = data;
             showInfoDebug();
         }
@@ -367,15 +423,50 @@ namespace serialPort
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = (SerialPort)sender;
-            byte[] data = new byte[sp.BytesToRead + 1];
-            sp.Read(data, 0, data.Length);
-            byte[] infoAfterBitStuffing = deBitStuffing(data);
+            String stringPackageInfo;
+            byte[] infoAfterDeBitStuffing;
+            byte[] data;
+            if (sp.BytesToRead == 11)
+            {
+                data = new byte[sp.BytesToRead];
+                sp.Read(data, 0, data.Length);
+                infoAfterDeBitStuffing = deBitStuffing(data);
+                stringPackageInfo = string.Join("", infoAfterDeBitStuffing.Select(x => Convert.ToString(x, 2).PadLeft(8, '0')));
+            }
+            else
+            {
+                data = new byte[sp.BytesToRead];
+                sp.Read(data, 0, data.Length);
+                infoAfterDeBitStuffing = deBitStuffing(data);
+                stringPackageInfo = string.Join("", infoAfterDeBitStuffing.Select(x => Convert.ToString(x, 2).PadLeft(8, '0')));
+            }
+            string hex;
+            
+            String reminder = verificationData(stringPackageInfo);
 
-            Package package = ByteArrayToObject(infoAfterBitStuffing);
+            if (reminder.PadLeft(9, '0').CompareTo("000000000") != 0)
+            {
+                stringPackageInfo = dataErrorFix(stringPackageInfo, reminder);
+                tBoxDebug.AppendText(">>" + "Fixing error...");
+                tBoxDebug.AppendText(Environment.NewLine);
+            }
+            byte[] infoAfterFixError = Enumerable.Range(0, stringPackageInfo.Length / 8).
+               Select(pos => Convert.ToByte(stringPackageInfo.Substring(pos * 8, 8), 2)).ToArray();
+
+
+            hex = ByteArrayToString(infoAfterFixError);
+            tBoxDebug.AppendText(">>" + hex);
+            tBoxDebug.AppendText(Environment.NewLine);
+
+            Package package = ByteArrayToObject(infoAfterFixError);
             if (package.DestinationAddress != Convert.ToByte(textBoxSourceAddress.Text))
+            {
+                tBoxDebug.AppendText(">>AddressError");
+                tBoxDebug.AppendText(Environment.NewLine);
                 return;
+            }
             string s = Encoding.GetEncoding("UTF-8").GetString(package.Data);
-            tBoxDebug.AppendText(">>" + "Receiving data..." + "\n");
+            tBoxDebug.AppendText(Environment.NewLine);
             outputTextBox.AppendText(s);
         }
 
@@ -393,7 +484,9 @@ namespace serialPort
             {
                 if (resultStr.Substring(8).Length < 8 && resultStr.Substring(8).Length != 0)
                 {
+                    string nullstr = "00000000";
                     resultWithoutFlag[i] = Convert.ToByte(resultStr.Substring(0, 8), 2);
+                    resultStr = resultStr.Insert(resultStr.Substring(0).Length, nullstr.Substring(resultStr.Substring(8).Length));
                     resultWithoutFlag[i + 1] = Convert.ToByte(resultStr.Substring(8), 2);
                     break;
                 }
@@ -404,7 +497,7 @@ namespace serialPort
                 }
             }
 
-            String flagStr = "00001110";
+            String flagStr = Convert.ToString(package.Flag, 2).PadLeft(8, '0');
             byte[] flag = Enumerable.Range(0, flagStr.Length / 8).
                 Select(pos => Convert.ToByte(flagStr.Substring(pos * 8, 8), 2)).ToArray();
 
@@ -448,7 +541,7 @@ namespace serialPort
             {
                 result[i] = package.Data[i - 3];
             }
-            result[10] = package.Fcs;
+            result[10] = package.Crc;
             return result;
         }
 
@@ -471,23 +564,27 @@ namespace serialPort
         {
             if (textBoxSourceAddress.Text.Length == 0)
             {
-                tBoxDebug.AppendText(">>Source address is not filled\n");
+                tBoxDebug.AppendText(">>Source address is not filled");
+                tBoxDebug.AppendText(Environment.NewLine);
                 return;
             }
             if (Convert.ToInt32(textBoxSourceAddress.Text) < 0 ||
                 Convert.ToInt32(textBoxSourceAddress.Text) > 255)
             {
-                tBoxDebug.AppendText(">>Source address is not in the range from 0 to 255\n");
+                tBoxDebug.AppendText(">>Source address is not in the range from 0 to 255");
+                tBoxDebug.AppendText(Environment.NewLine);
                 return;
             }
 
             if (textBoxDestinationAddress.Text == textBoxSourceAddress.Text && isDestinationAddressSet)
             {
-                tBoxDebug.AppendText(">>Source address must be different from Distination address\n");
+                tBoxDebug.AppendText(">>Source address must be different from Distination address");
+                tBoxDebug.AppendText(Environment.NewLine);
                 return;
             }
             package.SourceAddress = Convert.ToByte(textBoxSourceAddress.Text);
-            tBoxDebug.AppendText(">>Source address is set\n");
+            tBoxDebug.AppendText(">>Source address is set");
+            tBoxDebug.AppendText(Environment.NewLine);
             showInfoDebug();
             isSourceAddressSet = true;
             isAddressesSetted();
@@ -497,22 +594,26 @@ namespace serialPort
         {
             if (textBoxDestinationAddress.Text.Length == 0)
             {
-                tBoxDebug.AppendText(">>Distination address is not filled\n");
+                tBoxDebug.AppendText(">>Distination address is not filled");
+                tBoxDebug.AppendText(Environment.NewLine);
                 return;
             }
             if (Convert.ToInt32(textBoxDestinationAddress.Text) < 0 ||
                 Convert.ToInt32(textBoxDestinationAddress.Text) > 255)
             {
-                tBoxDebug.AppendText(">>Distination address is not in the range from 0 to 255\n");
+                tBoxDebug.AppendText(">>Distination address is not in the range from 0 to 255");
+                tBoxDebug.AppendText(Environment.NewLine);
                 return;
             }
             if (textBoxDestinationAddress.Text == textBoxSourceAddress.Text && isSourceAddressSet)
             {
-                tBoxDebug.AppendText(">>Distination address must be different from Source address\n");
+                tBoxDebug.AppendText(">>Distination address must be different from Source address");
+                tBoxDebug.AppendText(Environment.NewLine);
                 return;
             }
             package.DestinationAddress = Convert.ToByte(textBoxDestinationAddress.Text);
-            tBoxDebug.AppendText(">>Distination address is set\n");
+            tBoxDebug.AppendText(">>Distination address is set");
+            tBoxDebug.AppendText(Environment.NewLine);
             showInfoDebug();
             isDestinationAddressSet = true;
             isAddressesSetted();
@@ -523,28 +624,206 @@ namespace serialPort
             if (isSourceAddressSet && isDestinationAddressSet)
                 inputTextBox.Enabled = true;
         }
-    }
 
-    public class Package
-    {
-        public byte Flag { get; set; } = 0x0E;
-        public byte SourceAddress { get; set; }
-        public byte DestinationAddress { get; set; }
-        public byte[] Data { get; set; }
-        public byte Fcs { get; set; }
 
-        public Package() { }
-        public Package(byte[] data, byte fcs)
+        public String polinom = "100000111";
+
+        private String createCRC(String data)
         {
-            this.Data = data;
-            this.Fcs = fcs;
+            String dataWithoutZeros = removeFirstZeros(data);
+            if (dataWithoutZeros.Length == polinom.Length)
+                return dataWithoutZeros;
+            dataWithoutZeros = dataWithoutZeros.PadRight(dataWithoutZeros.Length + polinom.Length - 1, '0');
+
+            String reminder = "";
+            int i = 0;
+            while (true)
+            {
+                if (dataWithoutZeros.Length < polinom.Length - reminder.Length)
+                {
+                    reminder += dataWithoutZeros;
+                    break;
+                }
+                String dataToNewXor = addFromData(dataWithoutZeros.Substring(0, polinom.Length - reminder.Length), reminder);
+                if (dataToNewXor.Length < polinom.Length) break;
+                dataWithoutZeros = dataWithoutZeros.Substring(polinom.Length - reminder.Length);
+                reminder = removeFirstZeros(xorPolinom(dataToNewXor));
+            }
+            return reminder;
         }
-        public Package(byte destinationAddress, byte sourceAddress, byte[] data, byte fcs)
+        public String verificationData(String data)
         {
-            this.SourceAddress = sourceAddress;
-            this.DestinationAddress = destinationAddress;
-            this.Data = data;
-            this.Fcs = fcs;
+            String reminder = "";
+            String dataWithoutZeros = removeFirstZeros(data);
+            while (true)
+            {
+                if (dataWithoutZeros.Length < polinom.Length - reminder.Length)
+                {
+                    reminder += dataWithoutZeros;
+                    break;
+                }
+                String dataToNewXor = addFromData(dataWithoutZeros.Substring(0, polinom.Length - reminder.Length), reminder);
+                if (dataToNewXor.Length < polinom.Length) break;
+                dataWithoutZeros = dataWithoutZeros.Substring(polinom.Length - reminder.Length);
+                String reminderWithZeros = xorPolinom(dataToNewXor);
+                if (reminderWithZeros.PadLeft(9, '0').CompareTo("000000000") == 0 &&
+                    dataWithoutZeros.Length < polinom.Length - reminder.Length)
+                    return reminderWithZeros;
+
+                reminder = removeFirstZeros(xorPolinom(dataToNewXor));
+            }
+            return reminder;
+        }
+        public String addFromData(String data, String strNeed)
+        {
+            strNeed += data;
+            return strNeed;
+        }
+        public String xorPolinom(String argument)
+        {
+            int i = 0;
+            String result = "";
+            foreach (var item in argument)
+            {
+                if (item == polinom[i])
+                    result += '0';
+                else result += '1';
+                i++;
+            }
+            return result;
+        }
+        private String removeFirstZeros(String dataWithZeros)
+        {
+            int i = 0;
+            int j = 0;
+            int length = 0;
+            while(i<dataWithZeros.Length && dataWithZeros[i] == '0' )
+            {
+                length++;
+                i++;
+            }
+            while (j<length)
+            {
+                dataWithZeros = dataWithZeros.Substring(1);
+                j++;
+            }
+
+            return dataWithZeros;
+        }
+        private int weightOfReminder(String reminder)
+        {
+            int weight = 0;
+            foreach (var item in reminder)
+                if (item == '1') weight++;
+            return weight;
+        }
+
+        private String xorWithReminder(String data, String reminder)
+        {
+            String result = data.Substring(0, data.Length - reminder.Length);
+            for (int i = reminder.Length; i > 0; i--)
+            {
+                if (reminder[reminder.Length - i] == data[data.Length - i])
+                    result += '0';
+                else
+                    result += '1';
+            }
+            return result;
+        }
+
+        private String shiftLeft(String data)
+        {
+            String buf = data.Substring(0, 1);
+            data = data.Substring(1);
+            data += buf;
+            return data;
+        }
+
+        private String shiftRight(String data)
+        {
+            String buf = data.Substring(data.Length - 1);
+            data = data.Substring(0, data.Length - 1);
+            buf += data;
+            return buf;
+        }
+
+        private String dataErrorFix(String data, String reminder)
+        {
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (data[i] == '1')
+                {
+                    data = data.Remove(i, 1);
+                    data = data.Insert(i, "0");
+                    reminder = verificationData(data);
+                    if (reminder.PadLeft(9, '0').CompareTo("000000000") == 0)
+                        break;
+                    else
+                    {
+                        data = data.Remove(i, 1);
+                        data = data.Insert(i, "1");
+                    }
+                }
+                else
+                {
+                    data = data.Remove(i, 1);
+                    data = data.Insert(i, "1");
+                    reminder = verificationData(data);
+                    if (reminder.PadLeft(9, '0').CompareTo("000000000") == 0)
+                        break;
+                    else
+                    {
+                        data = data.Remove(i, 1);
+                        data = data.Insert(i, "0");
+                    }
+                }
+
+            }
+            return data;
+
+
+            //int counterLeftShift = 0;
+            //while (weightOfReminder(reminder) > 1)
+            //{
+            //    data = shiftLeft(data);
+            //    counterLeftShift++;
+            //    reminder = verificationData(data);
+            //}
+            //if (counterLeftShift != 0)
+            //{
+            //    data = xorWithReminder(data, reminder);
+
+            //    for (int i = 0; i < counterLeftShift; i++)
+            //        shiftRight(data);
+            //}
+            //else data = xorWithReminder(data, reminder);
+            //return data;
+        }
+
+    
+
+
+        public class Package
+        {
+            public byte Flag { get; set; } = 0x0E;
+            public byte SourceAddress { get; set; }
+            public byte DestinationAddress { get; set; }
+            public byte[] Data { get; set; }
+            public byte Crc { get; set; }
+
+            public Package() { }
+            public Package(byte[] data, byte crc)
+            {
+                this.Data = data;
+                this.Crc = crc;
+            }
+            public Package(byte destinationAddress, byte sourceAddress, byte[] data, byte crc)
+            {
+                this.SourceAddress = sourceAddress;
+                this.DestinationAddress = destinationAddress;
+                this.Data = data;
+                this.Crc = crc;
+            }
         }
     }
 }

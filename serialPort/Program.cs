@@ -20,13 +20,13 @@ namespace serialPort
             Application.SetCompatibleTextRenderingDefault(false);
 
 
-            if (args.Length == 0)
-            {
-                Process process = new Process();
-                process.StartInfo.FileName = "D:\\Documents\\Learning\\Unik\\5sem\\ТОКС\\serialPort\\serialPort\\bin\\Debug\\serialPort.exe";
-                process.StartInfo.Arguments = "app2";
-                process.Start();
-            }
+            //if (args.Length == 0)
+            //{
+            //    Process process = new Process();
+            //    process.StartInfo.FileName = "D:\\Documents\\Learning\\Unik\\5sem\\ТОКС\\serialPort\\serialPort\\bin\\Debug\\serialPort.exe";
+            //    process.StartInfo.Arguments = "app2";
+            //    process.Start();
+            //}
             Application.Run(new Form1());
 
 

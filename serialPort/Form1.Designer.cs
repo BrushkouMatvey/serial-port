@@ -81,7 +81,7 @@
             this.groupBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.groupBox3.Location = new System.Drawing.Point(17, 95);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(433, 86);
+            this.groupBox3.Size = new System.Drawing.Size(466, 86);
             this.groupBox3.TabIndex = 13;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Output";
@@ -93,7 +93,7 @@
             this.outputTextBox.Multiline = true;
             this.outputTextBox.Name = "outputTextBox";
             this.outputTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.outputTextBox.Size = new System.Drawing.Size(409, 54);
+            this.outputTextBox.Size = new System.Drawing.Size(442, 54);
             this.outputTextBox.TabIndex = 8;
             // 
             // groupBox1
@@ -105,7 +105,7 @@
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.groupBox1.Location = new System.Drawing.Point(17, 187);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(433, 538);
+            this.groupBox1.Size = new System.Drawing.Size(466, 561);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Control and debug";
@@ -122,7 +122,7 @@
             this.Adresses.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.Adresses.Location = new System.Drawing.Point(6, 304);
             this.Adresses.Name = "Adresses";
-            this.Adresses.Size = new System.Drawing.Size(421, 122);
+            this.Adresses.Size = new System.Drawing.Size(454, 122);
             this.Adresses.TabIndex = 20;
             this.Adresses.TabStop = false;
             this.Adresses.Text = "Packet transmission control";
@@ -154,7 +154,7 @@
             this.setDestinationButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.setDestinationButton.Location = new System.Drawing.Point(255, 57);
             this.setDestinationButton.Name = "setDestinationButton";
-            this.setDestinationButton.Size = new System.Drawing.Size(160, 28);
+            this.setDestinationButton.Size = new System.Drawing.Size(193, 28);
             this.setDestinationButton.TabIndex = 25;
             this.setDestinationButton.Text = "Set dest.";
             this.setDestinationButton.UseVisualStyleBackColor = true;
@@ -176,7 +176,7 @@
             this.setSourceButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.setSourceButton.Location = new System.Drawing.Point(255, 25);
             this.setSourceButton.Name = "setSourceButton";
-            this.setSourceButton.Size = new System.Drawing.Size(160, 28);
+            this.setSourceButton.Size = new System.Drawing.Size(193, 28);
             this.setSourceButton.TabIndex = 20;
             this.setSourceButton.Text = "Set source";
             this.setSourceButton.UseVisualStyleBackColor = true;
@@ -216,7 +216,7 @@
             this.groupBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.groupBox4.Location = new System.Drawing.Point(6, 124);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(421, 179);
+            this.groupBox4.Size = new System.Drawing.Size(454, 179);
             this.groupBox4.TabIndex = 19;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Properties";
@@ -239,7 +239,7 @@
             "115200"});
             this.cBoxSpeed.Location = new System.Drawing.Point(97, 21);
             this.cBoxSpeed.Name = "cBoxSpeed";
-            this.cBoxSpeed.Size = new System.Drawing.Size(318, 26);
+            this.cBoxSpeed.Size = new System.Drawing.Size(351, 26);
             this.cBoxSpeed.TabIndex = 1;
             // 
             // labelSpeed
@@ -263,7 +263,7 @@
             "8"});
             this.cBoxDataBits.Location = new System.Drawing.Point(97, 81);
             this.cBoxDataBits.Name = "cBoxDataBits";
-            this.cBoxDataBits.Size = new System.Drawing.Size(318, 26);
+            this.cBoxDataBits.Size = new System.Drawing.Size(351, 26);
             this.cBoxDataBits.TabIndex = 3;
             // 
             // applyButton
@@ -272,7 +272,7 @@
             this.applyButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.applyButton.Location = new System.Drawing.Point(189, 140);
             this.applyButton.Name = "applyButton";
-            this.applyButton.Size = new System.Drawing.Size(226, 34);
+            this.applyButton.Size = new System.Drawing.Size(259, 34);
             this.applyButton.TabIndex = 19;
             this.applyButton.Text = "Apply";
             this.applyButton.UseVisualStyleBackColor = true;
@@ -298,7 +298,7 @@
             "Even"});
             this.cBoxParity.Location = new System.Drawing.Point(97, 51);
             this.cBoxParity.Name = "cBoxParity";
-            this.cBoxParity.Size = new System.Drawing.Size(318, 26);
+            this.cBoxParity.Size = new System.Drawing.Size(351, 26);
             this.cBoxParity.TabIndex = 4;
             // 
             // labelStopbits
@@ -331,7 +331,7 @@
             "Two"});
             this.cBoxStopBits.Location = new System.Drawing.Point(97, 110);
             this.cBoxStopBits.Name = "cBoxStopBits";
-            this.cBoxStopBits.Size = new System.Drawing.Size(318, 26);
+            this.cBoxStopBits.Size = new System.Drawing.Size(351, 26);
             this.cBoxStopBits.TabIndex = 5;
             // 
             // groupBox2
@@ -342,7 +342,7 @@
             this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.groupBox2.Location = new System.Drawing.Point(6, 21);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(421, 99);
+            this.groupBox2.Size = new System.Drawing.Size(454, 99);
             this.groupBox2.TabIndex = 14;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Port";
@@ -355,15 +355,15 @@
             this.cBoxSelectedComPort.FormattingEnabled = true;
             this.cBoxSelectedComPort.Location = new System.Drawing.Point(12, 26);
             this.cBoxSelectedComPort.Name = "cBoxSelectedComPort";
-            this.cBoxSelectedComPort.Size = new System.Drawing.Size(403, 26);
+            this.cBoxSelectedComPort.Size = new System.Drawing.Size(436, 26);
             this.cBoxSelectedComPort.TabIndex = 9;
             // 
             // disconnectButton
             // 
             this.disconnectButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.disconnectButton.Location = new System.Drawing.Point(228, 55);
+            this.disconnectButton.Location = new System.Drawing.Point(244, 55);
             this.disconnectButton.Name = "disconnectButton";
-            this.disconnectButton.Size = new System.Drawing.Size(187, 31);
+            this.disconnectButton.Size = new System.Drawing.Size(204, 31);
             this.disconnectButton.TabIndex = 18;
             this.disconnectButton.Text = "Disconnect";
             this.disconnectButton.UseVisualStyleBackColor = true;
@@ -374,7 +374,7 @@
             this.connectButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.connectButton.Location = new System.Drawing.Point(12, 55);
             this.connectButton.Name = "connectButton";
-            this.connectButton.Size = new System.Drawing.Size(198, 31);
+            this.connectButton.Size = new System.Drawing.Size(226, 31);
             this.connectButton.TabIndex = 11;
             this.connectButton.Text = "Connect";
             this.connectButton.UseVisualStyleBackColor = true;
@@ -383,15 +383,15 @@
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.62946F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 64.37054F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 31.82898F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 68.17102F));
             this.tableLayoutPanel1.Controls.Add(this.tBoxDebugPortInfo, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.tBoxDebug, 1, 0);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(6, 432);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(421, 100);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(454, 123);
             this.tableLayoutPanel1.TabIndex = 17;
             // 
             // tBoxDebugPortInfo
@@ -400,16 +400,16 @@
             this.tBoxDebugPortInfo.Multiline = true;
             this.tBoxDebugPortInfo.Name = "tBoxDebugPortInfo";
             this.tBoxDebugPortInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tBoxDebugPortInfo.Size = new System.Drawing.Size(144, 92);
+            this.tBoxDebugPortInfo.Size = new System.Drawing.Size(128, 117);
             this.tBoxDebugPortInfo.TabIndex = 16;
             // 
             // tBoxDebug
             // 
-            this.tBoxDebug.Location = new System.Drawing.Point(153, 3);
+            this.tBoxDebug.Location = new System.Drawing.Point(147, 3);
             this.tBoxDebug.Multiline = true;
             this.tBoxDebug.Name = "tBoxDebug";
             this.tBoxDebug.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tBoxDebug.Size = new System.Drawing.Size(265, 92);
+            this.tBoxDebug.Size = new System.Drawing.Size(304, 117);
             this.tBoxDebug.TabIndex = 17;
             // 
             // input
@@ -418,7 +418,7 @@
             this.input.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.input.Location = new System.Drawing.Point(17, 8);
             this.input.Name = "input";
-            this.input.Size = new System.Drawing.Size(433, 86);
+            this.input.Size = new System.Drawing.Size(466, 86);
             this.input.TabIndex = 12;
             this.input.TabStop = false;
             this.input.Text = "Input";
@@ -430,7 +430,7 @@
             this.inputTextBox.Multiline = true;
             this.inputTextBox.Name = "inputTextBox";
             this.inputTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.inputTextBox.Size = new System.Drawing.Size(409, 54);
+            this.inputTextBox.Size = new System.Drawing.Size(442, 54);
             this.inputTextBox.TabIndex = 7;
             this.inputTextBox.Click += new System.EventHandler(this.InputTextBox_Click);
             this.inputTextBox.TextChanged += new System.EventHandler(this.InputTextBox_TextChanged);
@@ -439,7 +439,7 @@
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(456, 737);
+            this.ClientSize = new System.Drawing.Size(495, 760);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.input);
             this.Controls.Add(this.groupBox1);
